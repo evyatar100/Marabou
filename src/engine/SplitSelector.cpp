@@ -10,7 +10,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> *plConstraints,
         :
         _plConstraints( plConstraints ),
         _violatedPlConstraints( violatedPlConstraints ),
-        _numOfConstraints( _plConstraints->size() ),
+        _numOfConstraints( plConstraints->size() ),
         _constraint2index(),
         _constraint2OpenLogEntry(),
         _log(),

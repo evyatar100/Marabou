@@ -48,16 +48,16 @@ private:
         int numVisitedTreeStatesAtUnsplit;
     };
 
-    int _numOfConstraints;
-
     List<PiecewiseLinearConstraint *> *_plConstraints;
     List<PiecewiseLinearConstraint *> *_violatedPlConstraints;
 
-    std::list<LogEntry *> _log;
+    int _numOfConstraints;
 
     std::map<PiecewiseLinearConstraint *, int> _constraint2index;
 
     std::map<PiecewiseLinearConstraint *, LogEntry *> _constraint2OpenLogEntry;
+
+    std::list<LogEntry *> _log;
 
     std::default_random_engine _generator;
 };
