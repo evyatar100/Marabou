@@ -7,8 +7,8 @@
 
 
 SplitSelector::SplitSelector(IEngine *engine,
-              List<PiecewiseLinearConstraint *> &plConstraints,
-              List<PiecewiseLinearConstraint *> &violatedPlConstraints)
+              List<PiecewiseLinearConstraint *> *plConstraints,
+              List<PiecewiseLinearConstraint *> *violatedPlConstraints)
               :
               _engine (engine),
               _plConstraints(plConstraints),

@@ -14,14 +14,16 @@
 class SplitSelector {
 public:
     SplitSelector(IEngine *engine,
-                  List<PiecewiseLinearConstraint *> &plConstraints,
-                  List<PiecewiseLinearConstraint *> &violatedPlConstraints);
+                  List<PiecewiseLinearConstraint *> *plConstraints,
+                  List<PiecewiseLinearConstraint *> *violatedPlConstraints);
 
     PiecewiseLinearConstraint *getNextConstraint();
 
     void logPLConstraintSplit(PiecewiseLinearConstraint *constraint, int numVisitedTreeStates);
 
     void logPLConstraintUnsplit(PiecewiseLinearConstraint *constraint, int numVisitedTreeStates);
+
+    //TODO add destructor
 
 private:
 
@@ -48,8 +50,8 @@ private:
 
     int _numOfConstraints;
 
-    List<PiecewiseLinearConstraint *> &_plConstraints;
-    List<PiecewiseLinearConstraint *> &_violatedPlConstraints;
+    List<PiecewiseLinearConstraint *> *_plConstraints;
+    List<PiecewiseLinearConstraint *> *_violatedPlConstraints;
 
     std::list<LogEntry *> _log;
 
