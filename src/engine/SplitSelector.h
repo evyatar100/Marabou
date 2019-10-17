@@ -18,6 +18,8 @@ public:
             List<PiecewiseLinearConstraint *> *plConstraints,
             List<PiecewiseLinearConstraint *> *violatedPlConstraints );
 
+    ~SplitSelector();
+
     PiecewiseLinearConstraint *getNextConstraint();
 
     void logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates );
