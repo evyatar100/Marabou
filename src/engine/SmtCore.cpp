@@ -29,7 +29,7 @@ SmtCore::SmtCore( IEngine *engine,
           , _engine( engine )
           , _needToSplit( false )
           , _constraintForSplitting( NULL )
-          , _splitSelector( new SplitSelector( engine, plConstraints, violatedPlConstraints ) )
+          , _splitSelector( new SplitSelector( plConstraints, violatedPlConstraints ) )
           , _stateId( 0 )
 {
 }

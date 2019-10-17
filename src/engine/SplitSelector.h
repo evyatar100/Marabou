@@ -11,28 +11,30 @@
 #include <vector>
 #include <list>
 
-class SplitSelector {
+class SplitSelector
+{
 public:
-    SplitSelector(IEngine *engine,
-                  List<PiecewiseLinearConstraint *> *plConstraints,
-                  List<PiecewiseLinearConstraint *> *violatedPlConstraints);
+    SplitSelector(
+            List<PiecewiseLinearConstraint *> *plConstraints,
+            List<PiecewiseLinearConstraint *> *violatedPlConstraints );
 
     PiecewiseLinearConstraint *getNextConstraint();
 
-    void logPLConstraintSplit(PiecewiseLinearConstraint *constraint, int numVisitedTreeStates);
+    void logPLConstraintSplit( PiecewiseLinearConstraint *constraint, int numVisitedTreeStates );
 
-    void logPLConstraintUnsplit(PiecewiseLinearConstraint *constraint, int numVisitedTreeStates);
+    void logPLConstraintUnsplit( PiecewiseLinearConstraint *constraint, int numVisitedTreeStates );
 
     //TODO add destructor
 
 private:
 
-    struct LogEntry {
+    struct LogEntry
+    {
 
-        LogEntry(int numOfConstraints) : isViolated(numOfConstraints), isActive(numOfConstraints),
-                                         splittedConstraint(-1), numVisitedTreeStatesAtSplit(-1),
-                                         numVisitedTreeStatesAtUnsplit(-1) {
-            for (int i = 0; i < numOfConstraints; ++i)
+        LogEntry( int numOfConstraints )
+                : isViolated( numOfConstraints ), isActive( numOfConstraints ), splittedConstraint( -1 ), numVisitedTreeStatesAtSplit( -1 ), numVisitedTreeStatesAtUnsplit( -1 )
+        {
+            for ( int i = 0; i < numOfConstraints; ++i )
             {
                 isActive[i] = false;
                 isViolated[i] = false;
@@ -46,8 +48,6 @@ private:
         int numVisitedTreeStatesAtUnsplit;
     };
 
-    IEngine *engine;
-
     int _numOfConstraints;
 
     List<PiecewiseLinearConstraint *> *_plConstraints;
@@ -55,9 +55,9 @@ private:
 
     std::list<LogEntry *> _log;
 
-    std::map<PiecewiseLinearConstraint *, LogEntry *> _constraint2OpenLogEntry;
-
     std::map<PiecewiseLinearConstraint *, int> _constraint2index;
+
+    std::map<PiecewiseLinearConstraint *, LogEntry *> _constraint2OpenLogEntry;
 
     std::default_random_engine _generator;
 };
