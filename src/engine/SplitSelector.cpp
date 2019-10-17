@@ -14,7 +14,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> *plConstraints,
         _constraint2index(),
         _constraint2OpenLogEntry(),
         _log(),
-        _generator(),
+        _generator()
 {
     int i = 0;
     for ( auto constraint: *_violatedPlConstraints )
