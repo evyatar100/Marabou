@@ -37,8 +37,8 @@ private:
             }
         }
 
-        Vector<bool> isViolated;
-        Vector<bool> isActive;
+        std::vector<bool> isViolated;
+        std::vector<bool> isActive;
         int splittedConstraint;
         int numVisitedTreeStatesAtSplit;
         int numVisitedTreeStatesAtUnsplit;
@@ -51,11 +51,11 @@ private:
     List<PiecewiseLinearConstraint *> &_plConstraints;
     List<PiecewiseLinearConstraint *> &_violatedPlConstraints;
 
-    std::List<LogEntry *> _log;
+    std::list<LogEntry *> _log;
 
-    std::Map<PiecewiseLinearConstraint *, LogEntry *> _constraint2OpenLogEntry;
+    std::map<PiecewiseLinearConstraint *, LogEntry *> _constraint2OpenLogEntry;
 
-    std::Map<PiecewiseLinearConstraint *, int> _constraint2index;
+    std::map<PiecewiseLinearConstraint *, int> _constraint2index;
 
     std::default_random_engine _generator;
 };

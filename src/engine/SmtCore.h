@@ -29,7 +29,7 @@ class String;
 class SmtCore
 {
 public:
-    SmtCore( IEngine *engine
+    SmtCore( IEngine *engine,
              List<PiecewiseLinearConstraint *> &plConstraints,
              List<PiecewiseLinearConstraint *> &violatedPlConstraints );
 
