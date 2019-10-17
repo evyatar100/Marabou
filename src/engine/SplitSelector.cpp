@@ -34,10 +34,10 @@ SplitSelector::~SplitSelector()
     std::cout << '\n' <<"SplitSelector statistics:" << '\n';
     for ( auto logEntry: _log )
     {
-        int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesSplit;
+        int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
         std::cout << "splittedConstraint: " << logEntry->splittedConstraint <<'\n';
         std::cout << "size of subtree: " << size <<'\n';
-        std::cout '\n';
+        std::cout << '\n';
         delete logEntry;
     }
 
