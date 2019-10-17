@@ -3,9 +3,6 @@
 //
 
 #include "SplitSelector.h"
-#include "Debug.h"
-
-
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> *plConstraints,
                               List<PiecewiseLinearConstraint *> *violatedPlConstraints )
         :
@@ -14,14 +11,20 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> *plConstraints,
         _generator(),
         _constraint2index(),
         _log(),
-        _constraint2OpenLogEntry(),
-        _numOfConstraints(
-        _plConstraints->size() )
+        _numOfConstraints( _plConstraints->size() )
 {
-    for ( int i = 0; i<_numOfConstraints; ++i )
+}
+
+
+#include "Debug.h"
+_constraint2OpenLogEntry(),
+{
+    int i = 0;
+    for ( auto constraint: *_violatedPlConstraints )
     {
-        _constraint2index[_plConstraints->operator[]( i )] = i;
-        _constraint2OpenLogEntry[_plConstraints->operator[]( i )] = nullptr;
+        _constraint2index[constraint] = i;
+        _constraint2OpenLogEntry[constraint] = nullptr;
+        ++i;
     }
 }
 
