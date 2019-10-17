@@ -22,12 +22,15 @@
 #include "MarabouError.h"
 #include "SmtCore.h"
 
-SmtCore::SmtCore( IEngine *engine )
-    : _statistics( NULL )
-    , _engine( engine )
-    , _needToSplit( false )
-    , _constraintForSplitting( NULL )
-    , _stateId( 0 )
+SmtCore::SmtCore( IEngine *engine,
+                  List<PiecewiseLinearConstraint *> &plConstraints,
+                  List<PiecewiseLinearConstraint *> &violatedPlConstraints )
+        : _statistics( NULL )
+          , _engine( engine )
+          , _needToSplit( false )
+          , _constraintForSplitting( NULL )
+          , _stateId( 0 )
+          , _splitSelector( engine, plConstraints, violatedPlConstraints )
 {
 }
 
@@ -57,7 +60,7 @@ void SmtCore::reportViolatedConstraint( PiecewiseLinearConstraint *constraint )
     if ( _constraintToViolationCount[constraint] >= GlobalConfiguration::CONSTRAINT_VIOLATION_THRESHOLD )
     {
         _needToSplit = true;
-        _constraintForSplitting = constraint;
+        _constraintForSplitting = _splitSelector->getNextConstraint( violatedPlConstraints );;
     }
 }
 
@@ -74,7 +77,7 @@ bool SmtCore::needToSplit() const
     return _needToSplit;
 }
 
-void SmtCore::performSplit()
+void SmtCore::performSplit( List<PiecewiseLinearConstraint *> &violatedPlConstraints )
 {
     ASSERT( _needToSplit );
 
@@ -97,6 +100,11 @@ void SmtCore::performSplit()
         _statistics->incNumSplits();
         _statistics->incNumVisitedTreeStates();
     }
+
+    ASSERT( _statistics );
+
+    _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates );
+
 
     // Before storing the state of the engine, we:
     //   1. Obtain the splits.
@@ -150,6 +158,7 @@ bool SmtCore::popSplit()
 
     struct timespec start = TimeUtils::sampleMicro();
 
+    ASSERT( _statistics );
     if ( _statistics )
     {
         _statistics->incNumPops();
@@ -169,6 +178,7 @@ bool SmtCore::popSplit()
             throw MarabouError( MarabouError::DEBUGGING_ERROR );
         }
 
+        _splitSelector->logPLConstraintUnsplit( _stack.back()->_activeSplit, _statistics->getNumVisitedTreeStates );
         delete _stack.back()->_engineState;
         delete _stack.back();
         _stack.popBack();

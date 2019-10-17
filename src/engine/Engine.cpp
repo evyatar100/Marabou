@@ -31,7 +31,7 @@
 Engine::Engine( unsigned verbosity )
     : _rowBoundTightener( *_tableau )
     , _symbolicBoundTightener( NULL )
-    , _smtCore( this )
+    , _smtCore( this, &_plConstraints, &_violatedPlConstraints )
     , _numPlConstraintsDisabledByValidSplits( 0 )
     , _preprocessingEnabled( false )
     , _initialStateStored( false )
