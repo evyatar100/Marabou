@@ -34,6 +34,15 @@ SmtCore::SmtCore( IEngine *engine,
 {
 }
 
+SmtCore::SmtCore( IEngine *engine )
+        : _statistics( NULL )
+          , _engine( engine )
+          , _needToSplit( false )
+          , _constraintForSplitting( NULL )
+          , _stateId( 0 )
+{
+}
+
 SmtCore::~SmtCore()
 {
     freeMemory();
@@ -75,6 +84,69 @@ unsigned SmtCore::getViolationCounts( PiecewiseLinearConstraint *constraint ) co
 bool SmtCore::needToSplit() const
 {
     return _needToSplit;
+}
+
+
+void SmtCore::performSplit()
+{
+    ASSERT( _needToSplit );
+
+    // Maybe the constraint has already become inactive - if so, ignore
+    if ( !_constraintForSplitting->isActive() )
+    {
+        _needToSplit = false;
+        _constraintToViolationCount[_constraintForSplitting] = 0;
+        _constraintForSplitting = NULL;
+        return;
+    }
+
+    struct timespec start = TimeUtils::sampleMicro();
+
+    ASSERT( _constraintForSplitting->isActive() );
+    _needToSplit = false;
+
+    if ( _statistics )
+    {
+        _statistics->incNumSplits();
+        _statistics->incNumVisitedTreeStates();
+    }
+
+    // Before storing the state of the engine, we:
+    //   1. Obtain the splits.
+    //   2. Disable the constraint, so that it is marked as disbaled in the EngineState.
+    List<PiecewiseLinearCaseSplit> splits = _constraintForSplitting->getCaseSplits();
+    ASSERT( !splits.empty() );
+    ASSERT( splits.size() >= 2 ); // Not really necessary, can add code to handle this case.
+    _constraintForSplitting->setActiveConstraint( false );
+
+    // Obtain the current state of the engine
+    EngineState *stateBeforeSplits = new EngineState;
+    stateBeforeSplits->_stateId = _stateId;
+    ++_stateId;
+    _engine->storeState( *stateBeforeSplits, true );
+
+    StackEntry *stackEntry = new StackEntry;
+    // Perform the first split: add bounds and equations
+    List<PiecewiseLinearCaseSplit>::iterator split = splits.begin();
+    _engine->applySplit( *split );
+    stackEntry->_activeSplit = *split;
+
+    // Store the remaining splits on the stack, for later
+    stackEntry->_engineState = stateBeforeSplits;
+    ++split;
+    while ( split != splits.end() )
+    {
+        stackEntry->_alternativeSplits.append( *split );
+        ++split;
+    }
+
+    _stack.append( stackEntry );
+    if ( _statistics )
+    {
+        _statistics->setCurrentStackDepth( getStackDepth() );
+        struct timespec end = TimeUtils::sampleMicro();
+        _statistics->addTimeSmtCore( TimeUtils::timePassed( start, end ) );
+    }
 }
 
 void SmtCore::performSplit( List<PiecewiseLinearConstraint *> &violatedPlConstraints )
@@ -178,7 +250,10 @@ bool SmtCore::popSplit()
             throw MarabouError( MarabouError::DEBUGGING_ERROR );
         }
 
-        _splitSelector->logPLConstraintUnsplit( _stack.back()->_activeSplit, _statistics->getNumVisitedTreeStates );
+        if (_splitSelector != nullptr)
+        {
+            _splitSelector->logPLConstraintUnsplit( _stack.back()->_activeSplit, _statistics->getNumVisitedTreeStates );
+        }
         delete _stack.back()->_engineState;
         delete _stack.back();
         _stack.popBack();
