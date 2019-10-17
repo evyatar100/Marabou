@@ -63,7 +63,7 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
         std::cout << constraint << " 3 SS logPLConstraintSplit" << std::endl;
 
         int i = _constraint2index[constraint];
-        logEntry->isActive[i] = constraint->isActive();
+        //logEntry->isActive[i] = constraint->isActive();
     }
 
     std::cout << "4 SS logPLConstraintSplit" << std::endl;
