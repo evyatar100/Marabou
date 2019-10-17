@@ -177,7 +177,6 @@ bool SmtCore::popSplit()
 
     struct timespec start = TimeUtils::sampleMicro();
 
-    ASSERT( _statistics );
     if ( _statistics )
     {
         _statistics->incNumPops();
