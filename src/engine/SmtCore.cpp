@@ -29,8 +29,8 @@ SmtCore::SmtCore( IEngine *engine,
           , _engine( engine )
           , _needToSplit( false )
           , _constraintForSplitting( NULL )
-          , _stateId( 0 )
           , _splitSelector( new SplitSelector( engine, plConstraints, violatedPlConstraints ) )
+          , _stateId( 0 )
 {
 }
 
@@ -70,7 +70,7 @@ void SmtCore::reportViolatedConstraint( PiecewiseLinearConstraint *constraint )
     if ( _constraintToViolationCount[constraint] >= GlobalConfiguration::CONSTRAINT_VIOLATION_THRESHOLD )
     {
         _needToSplit = true;
-        _constraintForSplitting = _splitSelector->getNextConstraint( violatedPlConstraints );;
+        _constraintForSplitting = constraint;
     }
 }
 
@@ -113,7 +113,7 @@ void SmtCore::performSplit()
 
     ASSERT( _statistics );
 
-    _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates );
+    _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates() );
 
 
     // Before storing the state of the engine, we:
@@ -190,7 +190,7 @@ bool SmtCore::popSplit()
 
         if (_splitSelector != nullptr)
         {
-            _splitSelector->logPLConstraintUnsplit( _stack.back()->_activeSplit, _statistics->getNumVisitedTreeStates );
+            _splitSelector->logPLConstraintUnsplit( _stack.back()->_activeSplit, _statistics->getNumVisitedTreeStates() );
         }
         delete _stack.back()->_engineState;
         delete _stack.back();
