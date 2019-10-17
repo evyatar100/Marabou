@@ -117,8 +117,6 @@ void SmtCore::performSplit()
         _statistics->incNumVisitedTreeStates();
     }
 
-    ASSERT( _statistics );
-
     if (_splitSelector != nullptr)
     {
         _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates() );
