@@ -19,9 +19,9 @@ public:
 
     PiecewiseLinearConstraint *getNextConstraint();
 
-    void logPLConstraintSplit(PiecewiseLinearConstraint *constraint, int numVisitedTreeStates);
+    void logPLConstraintSplit(PiecewiseLinearConstraint &constraint, int numVisitedTreeStates);
 
-    void logPLConstraintUnsplit(PiecewiseLinearConstraint *constraint, int numVisitedTreeStates);
+    void logPLConstraintUnsplit(PiecewiseLinearConstraint &constraint, int numVisitedTreeStates);
 
     //TODO add destructor
 

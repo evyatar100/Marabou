@@ -34,7 +34,7 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint() {
     return *it;
 }
 
-void SplitSelector::logPLConstraintSplit(PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates) {
+void SplitSelector::logPLConstraintSplit(PiecewiseLinearConstraint &constraintForSplitting, int numVisitedTreeStates) {
     ASSERT(_constraint2OpenLogEntry.find(constraintForSplitting) != _constraint2OpenLogEntry.end());
     ASSERT(_constraint2OpenLogEntry[constraintForSplitting] == nullptr);
 
@@ -58,7 +58,7 @@ void SplitSelector::logPLConstraintSplit(PiecewiseLinearConstraint *constraintFo
     _log->push_back(logEntry);
 }
 
-void SplitSelector::logPLConstraintUnsplit(PiecewiseLinearConstraint *constraint, int numVisitedTreeStates)
+void SplitSelector::logPLConstraintUnsplit(PiecewiseLinearConstraint &constraint, int numVisitedTreeStates)
 {
     ASSERT(_constraint2OpenLogEntry.find(constraintForSplitting) != _constraint2OpenLogEntry.end());
 
