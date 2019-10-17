@@ -27,6 +27,8 @@
 #include "Preprocessor.h"
 #include "TableauRow.h"
 #include "TimeUtils.h"
+#include "SmtCore.h"
+
 
 Engine::Engine( unsigned verbosity )
     : _rowBoundTightener( *_tableau )

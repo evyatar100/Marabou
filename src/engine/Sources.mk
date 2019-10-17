@@ -25,6 +25,7 @@ SOURCES += \
 	RowBoundTightener.cpp \
 	Simulator.cpp \
 	SmtCore.cpp \
+	SplitSelector.cpp \
 	SymbolicBoundTightener.cpp \
 	Tableau.cpp \
 	TableauRow.cpp \
