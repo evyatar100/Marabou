@@ -29,6 +29,7 @@ class String;
 class SmtCore
 {
 public:
+    SmtCore( IEngine *engine );
     SmtCore( IEngine *engine,
              List<PiecewiseLinearConstraint *> &plConstraints,
              List<PiecewiseLinearConstraint *> &violatedPlConstraints );
@@ -66,6 +67,13 @@ public:
       splitting. Update bounds, add equations and update the stack.
     */
     void performSplit( List<PiecewiseLinearConstraint *> &violatedPlConstraints );
+
+    /*
+      Perform the split according to the constraint marked for
+      splitting. Update bounds, add equations and update the stack.
+    */
+    void performSplit();
+
 
     /*
       Pop an old split from the stack, and perform a new split as
