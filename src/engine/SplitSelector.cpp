@@ -4,6 +4,8 @@
 
 #include "SplitSelector.h"
 
+#include <iostream>
+
 #include "Debug.h"
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> *plConstraints,
                               List<PiecewiseLinearConstraint *> *violatedPlConstraints )
@@ -16,6 +18,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> *plConstraints,
         _log(),
         _generator()
 {
+    std::cout << "start SS constructor" << std::endl;
     int i = 0;
     for ( auto constraint: *_violatedPlConstraints )
     {
@@ -23,19 +26,25 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> *plConstraints,
         _constraint2OpenLogEntry[constraint] = nullptr;
         ++i;
     }
+    std::cout << "end SS constructor" << std::endl;
 }
 
 PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
 {
+    std::cout << "start SS getNextConstraint" << std::endl;
+
     std::uniform_int_distribution<int> distribution( 0, _violatedPlConstraints->size() - 1 );
     int i = distribution( _generator );
     auto it = _violatedPlConstraints->begin();
     std::advance( it, i );
+
+    std::cout << "start SS getNextConstraint" << std::endl;
     return *it;
 }
 
 void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates )
 {
+    std::cout << "start SS logPLConstraintSplit" << std::endl;
     ASSERT( _constraint2OpenLogEntry.find( constraintForSplitting ) != _constraint2OpenLogEntry.end() );
     ASSERT( _constraint2OpenLogEntry[constraintForSplitting] == nullptr );
 
@@ -57,10 +66,12 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
 
     _constraint2OpenLogEntry[constraintForSplitting] = logEntry;
     _log.push_back( logEntry );
+    std::cout << "start SS logPLConstraintSplit" << std::endl;
 }
 
 void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates )
 {
+    std::cout << "start SS logPLConstraintUnsplit" << std::endl;
     ASSERT( _constraint2OpenLogEntry.find( constraintForUnsplitting ) != _constraint2OpenLogEntry.end() );
 
     LogEntry *logEntry = _constraint2OpenLogEntry[constraintForUnsplitting];
@@ -69,4 +80,5 @@ void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constrain
     _constraint2OpenLogEntry[constraintForUnsplitting] = nullptr;
 
     logEntry->numVisitedTreeStatesAtUnsplit = numVisitedTreeStates;
+    std::cout << "start SS logPLConstraintUnsplit" << std::endl;
 }
