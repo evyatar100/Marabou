@@ -131,10 +131,12 @@ void SmtCore::performSplit()
     _engine->storeState( *stateBeforeSplits, true );
 
     StackEntry *stackEntry = new StackEntry;
+    stackEntry->_activeConstraint = _constraintForSplitting;
     // Perform the first split: add bounds and equations
     List<PiecewiseLinearCaseSplit>::iterator split = splits.begin();
     _engine->applySplit( *split );
     stackEntry->_activeSplit = *split;
+
 
     // Store the remaining splits on the stack, for later
     stackEntry->_engineState = stateBeforeSplits;
@@ -190,7 +192,7 @@ bool SmtCore::popSplit()
 
         if (_splitSelector != nullptr)
         {
-            _splitSelector->logPLConstraintUnsplit( _stack.back()->_activeSplit, _statistics->getNumVisitedTreeStates() );
+            _splitSelector->logPLConstraintUnsplit( _stack.back()->_activeConstraint, _statistics->getNumVisitedTreeStates() );
         }
         delete _stack.back()->_engineState;
         delete _stack.back();
