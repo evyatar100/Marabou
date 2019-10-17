@@ -20,7 +20,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> *plConstraints,
 {
     for ( int i = 0; i<_numOfConstraints; ++i )
     {
-        _constraint2index[_plConstraints->OPERATOR[]( i )] = i;
+        _constraint2index[_plConstraints->operator[]( i )] = i;
         _constraint2OpenLogEntry[_plConstraints->operator[]( i )] = nullptr;
     }
 }
@@ -41,32 +41,32 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
 
     LogEntry *logEntry = new LogEntry( _numOfConstraints );
     logEntry->splittedConstraint = _constraint2index[constraintForSplitting];
-    logEntry->numVisitedTreeStatesAtSplit( numVisitedTreeStates );
+    logEntry->numVisitedTreeStatesAtSplit = numVisitedTreeStates;
 
     for ( auto constraint: *_violatedPlConstraints )
     {
         int i = _constraint2index[constraint];
-        logEntry.isActive[i] = constraint->isActive();
+        logEntry->isActive[i] = constraint->isActive();
     }
 
     for ( auto constraint: *_violatedPlConstraints )
     {
         int i = _constraint2index[constraint];
-        logEntry.isViolated[i] = true;
+        logEntry->isViolated[i] = true;
     }
 
-    _constraint2OpenLogEntry[constraint] = logEntry;
+    _constraint2OpenLogEntry[constraintForSplitting] = logEntry;
     _log.push_back( logEntry );
 }
 
-void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constraint, int numVisitedTreeStates )
+void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates )
 {
-    ASSERT( _constraint2OpenLogEntry.find( constraintForSplitting ) != _constraint2OpenLogEntry.end() );
+    ASSERT( _constraint2OpenLogEntry.find( constraintForUnsplitting ) != _constraint2OpenLogEntry.end() );
 
-    LogEntry *logEntry = _constraint2OpenLogEntry[constraint];
+    LogEntry *logEntry = _constraint2OpenLogEntry[constraintForUnsplitting];
     ASSERT( logEntry != nullptr );
 
-    _constraint2OpenLogEntry[constraint] = nullptr;
+    _constraint2OpenLogEntry[constraintForUnsplitting] = nullptr;
 
     logEntry->numVisitedTreeStatesAtUnsplit = numVisitedTreeStates;
 }
