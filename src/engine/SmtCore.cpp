@@ -39,6 +39,7 @@ SmtCore::SmtCore( IEngine *engine )
           , _engine( engine )
           , _needToSplit( false )
           , _constraintForSplitting( NULL )
+          , _splitSelector( nullptr )
           , _stateId( 0 )
 {
 }
@@ -46,7 +47,12 @@ SmtCore::SmtCore( IEngine *engine )
 SmtCore::~SmtCore()
 {
     freeMemory();
-    delete _splitSelector;
+    if (_splitSelector != nullptr)
+    {
+        delete _splitSelector;
+        _splitSelector = nullptr;
+    }
+
 }
 
 void SmtCore::freeMemory()
@@ -113,7 +119,10 @@ void SmtCore::performSplit()
 
     ASSERT( _statistics );
 
-    _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates() );
+    if (_splitSelector != nullptr)
+    {
+        _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates() );
+    }
 
 
     // Before storing the state of the engine, we:
