@@ -10,7 +10,11 @@
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
-        _plConstraints( plConstraints ), _violatedPlConstraints( violatedPlConstraints ), _numOfConstraints( plConstraints->size() ), _constraint2index(), _constraint2OpenLogEntry(), _log()
+        _plConstraints( plConstraints )
+        , _numOfConstraints( plConstraints->size() )
+        , _constraint2index()
+        , _constraint2OpenLogEntry()
+        , _log()
         , _generator()
 {
     std::cout << "start SS constructor" << std::endl;
@@ -41,11 +45,11 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
 {
     std::cout << "start SS getNextConstraint" << std::endl;
     bool foundActiveConstraint = false;
+    std::uniform_int_distribution<int> distribution( 0, _numOfConstraints - 1 );
     while ( !isFindActiveConstraint )
     {
-        std::uniform_int_distribution<int> distribution( 0, _numOfConstraints - 1 );
         int i = distribution( _generator );
-        auto it = _violatedPlConstraints->begin();
+        auto it = _plConstraints->begin();
         std::advance( it, i );
         PiecewiseLinearConstraint *constraint = *it;
         if ( constraint->isActive() )
@@ -74,7 +78,7 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
 
     std::cout << "2 SS logPLConstraintSplit" << std::endl;
 
-    for ( auto constraint: *_violatedPlConstraints )
+    for ( auto constraint: *_plConstraints )
     {
         std::cout << constraint << " 3 SS logPLConstraintSplit" << std::endl;
 
