@@ -23,8 +23,7 @@
 #include "SmtCore.h"
 
 SmtCore::SmtCore( IEngine *engine,
-                  List<PiecewiseLinearConstraint *> plConstraints,
-                  List<PiecewiseLinearConstraint *> violatedPlConstraints )
+                  List<PiecewiseLinearConstraint *> plConstraints )
         : _statistics( NULL )
           , _engine( engine )
           , _needToSplit( false )
