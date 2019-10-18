@@ -19,7 +19,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 {
     std::cout << "start SS constructor" << std::endl;
     int i = 0;
-    for ( auto constraint: *plConstraints )
+    for ( auto constraint: _plConstraints )
     {
         _constraint2index[constraint] = i;
         _constraint2OpenLogEntry[constraint] = nullptr;
