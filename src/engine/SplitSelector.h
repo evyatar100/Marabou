@@ -15,8 +15,7 @@ class SplitSelector
 {
 public:
     SplitSelector(
-            List<PiecewiseLinearConstraint *> *plConstraints,
-            List<PiecewiseLinearConstraint *> *violatedPlConstraints );
+            List<PiecewiseLinearConstraint *> plConstraints );
 
     ~SplitSelector();
 
@@ -34,7 +33,11 @@ private:
     {
 
         LogEntry( int numOfConstraints )
-                : isViolated( numOfConstraints ), isActive( numOfConstraints ), splittedConstraint( -1 ), numVisitedTreeStatesAtSplit( -1 ), numVisitedTreeStatesAtUnsplit( -1 )
+                : isViolated( numOfConstraints )
+                , isActive( numOfConstraints )
+                , splittedConstraint( nullptr )
+                , numVisitedTreeStatesAtSplit( -1 )
+                , numVisitedTreeStatesAtUnsplit( -1 )
         {
             for ( int i = 0; i < numOfConstraints; ++i )
             {
@@ -45,13 +48,12 @@ private:
 
         std::vector<bool> isViolated;
         std::vector<bool> isActive;
-        int splittedConstraint;
+        PiecewiseLinearConstraint* splittedConstraint;
         int numVisitedTreeStatesAtSplit;
         int numVisitedTreeStatesAtUnsplit;
     };
 
-    List<PiecewiseLinearConstraint *> *_plConstraints;
-    List<PiecewiseLinearConstraint *> *_violatedPlConstraints;
+    List<PiecewiseLinearConstraint *> _plConstraints;
 
     int _numOfConstraints;
 

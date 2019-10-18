@@ -7,20 +7,15 @@
 #include <iostream>
 
 #include "Debug.h"
-SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> *plConstraints,
-                              List<PiecewiseLinearConstraint *> *violatedPlConstraints )
+
+SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
-        _plConstraints( plConstraints ),
-        _violatedPlConstraints( violatedPlConstraints ),
-        _numOfConstraints( plConstraints->size() ),
-        _constraint2index(),
-        _constraint2OpenLogEntry(),
-        _log(),
-        _generator()
+        _plConstraints( plConstraints ), _violatedPlConstraints( violatedPlConstraints ), _numOfConstraints( plConstraints->size() ), _constraint2index(), _constraint2OpenLogEntry(), _log()
+        , _generator()
 {
     std::cout << "start SS constructor" << std::endl;
     int i = 0;
-    for ( auto constraint: *_violatedPlConstraints )
+    for ( auto constraint: *plConstraints )
     {
         _constraint2index[constraint] = i;
         _constraint2OpenLogEntry[constraint] = nullptr;
@@ -31,28 +26,36 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> *plConstraints,
 
 SplitSelector::~SplitSelector()
 {
-    std::cout << '\n' <<"SplitSelector statistics:" << '\n';
+    std::cout << '\n' << "SplitSelector statistics:" << '\n';
     for ( auto logEntry: _log )
     {
         int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
-        std::cout << "splittedConstraint: " << logEntry->splittedConstraint <<'\n';
-        std::cout << "size of subtree: " << size <<'\n';
-        std::cout << '\n';
+        std::cout << "splittedConstraint: " << logEntry->splittedConstraint << '\t';
+        std::cout << "size of subtree: " << size << '\n';
         delete logEntry;
     }
 
 }
+
 PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
 {
     std::cout << "start SS getNextConstraint" << std::endl;
-
-    std::uniform_int_distribution<int> distribution( 0, _violatedPlConstraints->size() - 1 );
-    int i = distribution( _generator );
-    auto it = _violatedPlConstraints->begin();
-    std::advance( it, i );
+    bool foundActiveConstraint = false;
+    while ( !isFindActiveConstraint )
+    {
+        std::uniform_int_distribution<int> distribution( 0, _numOfConstraints - 1 );
+        int i = distribution( _generator );
+        auto it = _violatedPlConstraints->begin();
+        std::advance( it, i );
+        PiecewiseLinearConstraint *constraint = *it;
+        if ( constraint->isActive() )
+        {
+            foundActiveConstraint = true;
+        }
+    }
 
     std::cout << "start SS getNextConstraint" << std::endl;
-    return *it;
+    return constraint;
 }
 
 void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates )
@@ -66,7 +69,7 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
 
 
     LogEntry *logEntry = new LogEntry( _numOfConstraints );
-    logEntry->splittedConstraint = _constraint2index[constraintForSplitting];
+    logEntry->splittedConstraint = constraintForSplitting;
     logEntry->numVisitedTreeStatesAtSplit = numVisitedTreeStates;
 
     std::cout << "2 SS logPLConstraintSplit" << std::endl;
@@ -75,21 +78,12 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
     {
         std::cout << constraint << " 3 SS logPLConstraintSplit" << std::endl;
 
-        //int i = _constraint2index[constraint];
-        //logEntry->isActive[i] = constraint->isActive();
+//        int i = _constraint2index[constraint];
+//        logEntry->isActive[i] = constraint->isActive();
     }
 
     std::cout << "4 SS logPLConstraintSplit" << std::endl;
 
-
-    for ( auto constraint: *_violatedPlConstraints )
-    {
-        std::cout <<constraint<< "  5 SS logPLConstraintSplit" << std::endl;
-
-//        int i = _constraint2index[constraint];
-//        logEntry->isViolated[i] = true;
-    }
-    std::cout << " 6 SS logPLConstraintSplit" << std::endl;
 
     _constraint2OpenLogEntry[constraintForSplitting] = logEntry;
     _log.push_back( logEntry );
