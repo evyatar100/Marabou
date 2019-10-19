@@ -20,6 +20,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _constraint2OpenLogEntry()
         , _log()
         , _generator()
+        , _fout()
 {
     std::cout << "start SS constructor" << '\n';
     int i = 0;
@@ -30,7 +31,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         ++i;
     }
 
-    _fout.open(CSV_FILE_PATH);
+    _fout.open(CSV_FILE_PATH, ios::out | ios::app);
     writeHeadLine();
 
     std::cout << "end SS constructor" << '\n';
