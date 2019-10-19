@@ -10,7 +10,7 @@
 
 #include "Debug.h"
 
-#define CSV_FILE_PATH "SplitSelector_statistics.csv"
+#define CSV_FILE_PATH "~/Desktop/Marabou/SplitSelector_statistics.csv"
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
