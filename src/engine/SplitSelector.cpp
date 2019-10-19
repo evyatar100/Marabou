@@ -5,11 +5,10 @@
 #include "SplitSelector.h"
 
 #include <iostream>
+#include <list>
 
 #include "Debug.h"
 
-void writeHeadLine();
-void writeLogEntry(LogEntry* logEntry);
 
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
@@ -47,7 +46,7 @@ SplitSelector::~SplitSelector()
         std::cout << "size of subtree: " << size << '\n';
         delete logEntry;
     }
-    fout.close();
+    _fout.close();
 
 }
 
@@ -55,7 +54,7 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
 {
     std::cout << "start SS getNextConstraint" << '\n';
 
-    List<PiecewiseLinearConstraint *> activeConstraints();
+    std::list<PiecewiseLinearConstraint *> activeConstraints();
     for (auto constraint: _plConstraints)
     {
         if ( constraint->isActive() )

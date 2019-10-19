@@ -65,6 +65,9 @@ private:
     std::default_random_engine _generator;
 
     std::fstream _fout;
+
+    void writeHeadLine();
+    void writeLogEntry(LogEntry* logEntry);
 };
 
 
