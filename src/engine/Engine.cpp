@@ -33,7 +33,7 @@
 Engine::Engine( unsigned verbosity )
     : _rowBoundTightener( *_tableau )
     , _symbolicBoundTightener( NULL )
-    , _smtCore( this, _plConstraints )
+    , _smtCore( this )
     , _numPlConstraintsDisabledByValidSplits( 0 )
     , _preprocessingEnabled( false )
     , _initialStateStored( false )
@@ -1024,6 +1024,8 @@ void Engine::initializeTableau( const double *constraintMatrix, const List<unsig
         plConstraint->registerConstraintBoundTightener( _constraintBoundTightener );
 
     _plConstraints = _preprocessedQuery.getPiecewiseLinearConstraints();
+    _smtCore = SmtCore( this, _plConstraints )
+
     for ( const auto &constraint : _plConstraints )
     {
         constraint->registerAsWatcher( _tableau );
