@@ -126,7 +126,7 @@ void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constrain
 
     logEntry->numVisitedTreeStatesAtUnsplit = numVisitedTreeStates;
 
-    writeLogEntry(logEntry);
+//    writeLogEntry(logEntry);
 
     std::cout << "start SS logPLConstraintUnsplit" << '\n';
 }
@@ -144,12 +144,12 @@ void SplitSelector::writeHeadLine()
 
 void SplitSelector::writeLogEntry(LogEntry* logEntry)
 {
-//    int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
-//    _fout << logEntry->splittedConstraint << ", " << size;
-//    for (auto x: logEntry->isActive)
-//    {
-//        _fout << ", " << x;
-//    }
-//
-//    _fout << "\n";
+    int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
+    _fout << logEntry->splittedConstraint << ", " << size;
+    for (auto x: logEntry->isActive)
+    {
+        _fout << ", " << x;
+    }
+
+    _fout << "\n";
 }
