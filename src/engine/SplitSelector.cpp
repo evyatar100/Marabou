@@ -31,7 +31,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
     }
 
     _fout.open(CSV_FILE_NAME);
-    writeHeadLine();
+//    writeHeadLine();
 
     std::cout << "end SS constructor" << '\n';
 }
