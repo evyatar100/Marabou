@@ -33,12 +33,8 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         ++i;
     }
 
-    _fout.open(CSV_FILE_PATH, std::ios::out | std::ios::app);
-
+    _fout.open(CSV_FILE_PATH, std::ios::out);
     writeHeadLine();
-    _fout.close();
-
-    exit(0);
 }
 
 SplitSelector::~SplitSelector()
