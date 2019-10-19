@@ -27,7 +27,7 @@ SmtCore::SmtCore( IEngine *engine )
           , _engine( engine )
           , _needToSplit( false )
           , _constraintForSplitting( NULL )
-          , _splitSelector()
+          , _splitSelector( nullptr )
           , _stateId( 0 )
 {
 }
@@ -53,8 +53,9 @@ void SmtCore::freeMemory()
     _stack.clear();
 }
 
-void setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints )
+void SmtCore::setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints )
 {
+    _splitSelector = new SplitSelector();
     _splitSelector->setPLConstrainsList(plConstraints);
 }
 
@@ -111,7 +112,11 @@ void SmtCore::performSplit()
 
     if (_splitSelector != nullptr)
     {
-        _constraintForSplitting = _splitSelector->getNextConstraint();
+        auto constraint =  _splitSelector->getNextConstraint();
+        if ( _constraintForSplitting)
+        {
+            _constraintForSplitting = constraint;
+        }
         _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates() );
     }
 

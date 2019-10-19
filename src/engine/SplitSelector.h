@@ -14,18 +14,16 @@
 class SplitSelector
 {
 public:
-    SplitSelector();
+    SplitSelector(
+            List<PiecewiseLinearConstraint *> plConstraints );
 
     ~SplitSelector();
-
-    void setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints );
 
     PiecewiseLinearConstraint *getNextConstraint();
 
     void logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates );
 
     void logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates );
-
 
 private:
 
