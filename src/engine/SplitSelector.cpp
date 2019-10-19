@@ -54,6 +54,7 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
         std::cout << " 2 SS getNextConstraint" << std::endl;
         i = distribution( _generator );
         std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
+        std::cout << "_numOfConstraints = " << _numOfConstraints << " SS 3.1 getNextConstraint" << std::endl;
         auto it = _plConstraints.begin();
         std::cout << "4 SS getNextConstraint" << std::endl;
         std::advance( it, i );
