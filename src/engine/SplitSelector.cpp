@@ -38,7 +38,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
     writeHeadLine();
     _fout.close();
 
-    exit(999);
+    exit(0);
 }
 
 SplitSelector::~SplitSelector()
