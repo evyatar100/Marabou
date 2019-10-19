@@ -8,6 +8,10 @@
 
 #include "Debug.h"
 
+void writeHeadLine();
+void writeLogEntry(LogEntry* logEntry);
+
+
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
         _plConstraints( plConstraints )
@@ -16,6 +20,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _constraint2OpenLogEntry()
         , _log()
         , _generator()
+        , _fout()
 {
     std::cout << "start SS constructor" << '\n';
     int i = 0;
@@ -25,6 +30,10 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         _constraint2OpenLogEntry[constraint] = nullptr;
         ++i;
     }
+
+    _fout.open("SplitSelector_statistics.csv");
+    writeHeadLine();
+
     std::cout << "end SS constructor" << '\n';
 }
 
@@ -38,6 +47,7 @@ SplitSelector::~SplitSelector()
         std::cout << "size of subtree: " << size << '\n';
         delete logEntry;
     }
+    fout.close();
 
 }
 
@@ -116,5 +126,31 @@ void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constrain
     _constraint2OpenLogEntry[constraintForUnsplitting] = nullptr;
 
     logEntry->numVisitedTreeStatesAtUnsplit = numVisitedTreeStates;
+
+    writeLogEntry(logEntry);
+
     std::cout << "start SS logPLConstraintUnsplit" << '\n';
+}
+
+void writeHeadLine()
+{
+    _fout << "current constraint" << ", " << "sub-tree size";
+    for (auto constraint: _plConstraints)
+    {
+        _fout << ", " << constraint;
+    }
+
+    _fout << "\n";
+}
+
+void writeLogEntry(LogEntry* logEntry)
+{
+    int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
+    _fout << logEntry->splittedConstraint << ", " << size;
+    for (auto x: logEntry->isActive)
+    {
+        _fout << ", " << x;
+    }
+
+    _fout << "\n";
 }

@@ -62,6 +62,8 @@ private:
     std::list<LogEntry *> _log;
 
     std::default_random_engine _generator;
+
+    fstream _fout;
 };
 
 
