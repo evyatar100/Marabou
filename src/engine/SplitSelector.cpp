@@ -51,22 +51,22 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
     int i = 0;
     while ( !foundActiveConstraint )
     {
-        std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
+        std::cout << " 2 SS getNextConstraint" << std::endl;
         i = distribution( _generator );
-        std::cout << "4 SS getNextConstraint" << std::endl;
+        std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
         auto it = _plConstraints.begin();
-        std::cout << "5 SS getNextConstraint" << std::endl;
+        std::cout << "4 SS getNextConstraint" << std::endl;
         std::advance( it, i );
-        std::cout << "6 SS getNextConstraint" << std::endl;
+        std::cout << "5 SS getNextConstraint" << std::endl;
         constraint = *it;
-        std::cout << "7 SS getNextConstraint" << std::endl;
+        std::cout << "6 SS getNextConstraint" << std::endl;
 
-        if ( constraint->isActive() )
+        if ( constraint != nullptr && constraint->isActive() )
         {
-            std::cout << "8 SS getNextConstraint" << std::endl;
+            std::cout << "7.5 SS getNextConstraint" << std::endl;
             foundActiveConstraint = true;
         }
-        std::cout << "9 SS getNextConstraint" << std::endl;
+        std::cout << "7 SS getNextConstraint" << std::endl;
     }
 
     std::cout << "start SS getNextConstraint" << std::endl;
