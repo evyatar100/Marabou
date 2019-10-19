@@ -54,7 +54,7 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
 {
     std::cout << "start SS getNextConstraint" << '\n';
 
-    std::list<PiecewiseLinearConstraint *> activeConstraints();
+    std::list<PiecewiseLinearConstraint *> activeConstraints;
     for (auto constraint: _plConstraints)
     {
         if ( constraint->isActive() )
@@ -131,7 +131,7 @@ void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constrain
     std::cout << "start SS logPLConstraintUnsplit" << '\n';
 }
 
-void writeHeadLine()
+void SplitSelector::writeHeadLine()
 {
     _fout << "current constraint" << ", " << "sub-tree size";
     for (auto constraint: _plConstraints)
@@ -142,7 +142,7 @@ void writeHeadLine()
     _fout << "\n";
 }
 
-void writeLogEntry(LogEntry* logEntry)
+void SplitSelector::writeLogEntry(LogEntry* logEntry)
 {
     int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
     _fout << logEntry->splittedConstraint << ", " << size;
