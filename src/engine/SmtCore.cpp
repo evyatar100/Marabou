@@ -55,8 +55,7 @@ void SmtCore::freeMemory()
 
 void SmtCore::setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints )
 {
-    _splitSelector = new SplitSelector();
-    _splitSelector->setPLConstrainsList(plConstraints);
+    _splitSelector = new SplitSelector( plConstraints );
 }
 
 void SmtCore::reportViolatedConstraint( PiecewiseLinearConstraint *constraint )
