@@ -9,7 +9,7 @@
 
 #include "Debug.h"
 
-
+#define CSV_FILE_NAME "SplitSelector_statistics.csv"
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
@@ -30,7 +30,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         ++i;
     }
 
-    _fout.open("SplitSelector_statistics.csv");
+    _fout.open(CSV_FILE_NAME);
     writeHeadLine();
 
     std::cout << "end SS constructor" << '\n';
@@ -144,12 +144,12 @@ void SplitSelector::writeHeadLine()
 
 void SplitSelector::writeLogEntry(LogEntry* logEntry)
 {
-    int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
-    _fout << logEntry->splittedConstraint << ", " << size;
-    for (auto x: logEntry->isActive)
-    {
-        _fout << ", " << x;
-    }
-
-    _fout << "\n";
+//    int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
+//    _fout << logEntry->splittedConstraint << ", " << size;
+//    for (auto x: logEntry->isActive)
+//    {
+//        _fout << ", " << x;
+//    }
+//
+//    _fout << "\n";
 }
