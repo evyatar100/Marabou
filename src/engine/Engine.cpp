@@ -310,7 +310,7 @@ void Engine::mainLoopStatistics()
     struct timespec start = TimeUtils::sampleMicro();
 
     unsigned activeConstraints = 0;
-    for ( const auto &constraint : _plConstraints );
+    for ( const auto &constraint : _plConstraints )
         if ( constraint->isActive() )
             ++activeConstraints;
 
@@ -1024,7 +1024,7 @@ void Engine::initializeTableau( const double *constraintMatrix, const List<unsig
         plConstraint->registerConstraintBoundTightener( _constraintBoundTightener );
 
     _plConstraints = _preprocessedQuery.getPiecewiseLinearConstraints();
-    _smtCore = SmtCore( this, _plConstraints )
+    _smtCore = SmtCore( this, _plConstraints );
 
     for ( const auto &constraint : _plConstraints )
     {
