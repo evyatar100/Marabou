@@ -10,6 +10,7 @@
 #include <random>
 #include <vector>
 #include <list>
+#include <fstream>
 
 class SplitSelector
 {
@@ -63,7 +64,7 @@ private:
 
     std::default_random_engine _generator;
 
-    fstream _fout;
+    std::fstream _fout;
 };
 
 
