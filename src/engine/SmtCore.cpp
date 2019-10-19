@@ -27,7 +27,7 @@ SmtCore::SmtCore( IEngine *engine )
           , _engine( engine )
           , _needToSplit( false )
           , _constraintForSplitting( NULL )
-          , _splitSelector( nullptr )
+          , _splitSelector()
           , _stateId( 0 )
 {
 }
