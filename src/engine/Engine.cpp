@@ -310,7 +310,7 @@ void Engine::mainLoopStatistics()
     struct timespec start = TimeUtils::sampleMicro();
 
     unsigned activeConstraints = 0;
-    for ( const auto &constraint : _plConstraints )
+    for ( const auto &constraint : _plConstraints );
         if ( constraint->isActive() )
             ++activeConstraints;
 
