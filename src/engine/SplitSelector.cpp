@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#include <list>
+
 #include "Debug.h"
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
