@@ -25,7 +25,6 @@ public:
 
     void logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates );
 
-    //TODO add destructor
 
 private:
 

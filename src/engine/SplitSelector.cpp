@@ -46,17 +46,26 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
     std::cout << "start SS getNextConstraint" << std::endl;
     PiecewiseLinearConstraint *constraint = nullptr;
     bool foundActiveConstraint = false;
+    std::cout << "1 SS getNextConstraint" << std::endl;
     std::uniform_int_distribution<int> distribution( 0, _numOfConstraints - 1 );
     while ( !foundActiveConstraint )
     {
+        std::cout <<"i = " << i << " SS 3 getNextConstraint" << std::endl;
         int i = distribution( _generator );
+        std::cout "4 SS getNextConstraint" << std::endl;
         auto it = _plConstraints.begin();
+        std::cout "5 SS getNextConstraint" << std::endl;
         std::advance( it, i );
+        std::cout "6 SS getNextConstraint" << std::endl;
         constraint = *it;
+        std::cout "7 SS getNextConstraint" << std::endl;
+
         if ( constraint->isActive() )
         {
+            std::cout "8 SS getNextConstraint" << std::endl;
             foundActiveConstraint = true;
         }
+        std::cout "9 SS getNextConstraint" << std::endl;
     }
 
     std::cout << "start SS getNextConstraint" << std::endl;
