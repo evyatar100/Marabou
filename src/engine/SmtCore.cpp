@@ -111,11 +111,11 @@ void SmtCore::performSplit()
 
     if (_splitSelector != nullptr)
     {
-//        auto constraint =  _splitSelector->getNextConstraint();
-//        if ( _constraintForSplitting)
-//        {
-//            _constraintForSplitting = constraint;
-//        }
+        auto constraint =  _splitSelector->getNextConstraint();
+        if ( _constraintForSplitting)
+        {
+            _constraintForSplitting = constraint;
+        }
         _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates() );
     }
 
