@@ -51,14 +51,13 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
     std::cout << "1 SS getNextConstraint" << '\n';
     for (auto constraint: _plConstraints)
     {
-        std::cout << "2 SS getNextConstraint" << '\n';
         if ( constraint->isActive() )
         {
-            std::cout << "2.1 SS getNextConstraint" << '\n';
             activeConstraints.push_back(constraint);
         }
     }
 
+    std::cout << "activeConstraints.size() = " << activeConstraints.size() << " SS 2 getNextConstraint" << std::endl;
     if (activeConstraints.size() == 0)
     {
         std::cout << "nulll SS getNextConstraint" << '\n';
