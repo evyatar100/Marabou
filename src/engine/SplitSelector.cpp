@@ -9,6 +9,8 @@
 #include <list>
 
 #include "Debug.h"
+#include <stdlib.h>
+
 
 #define CSV_FILE_PATH "SplitSelector_statistics.csv"
 
@@ -32,7 +34,11 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
     }
 
     _fout.open(CSV_FILE_PATH, std::ios::out | std::ios::app);
+
     writeHeadLine();
+    _fout.close();
+
+    exit(999);
 }
 
 SplitSelector::~SplitSelector()
