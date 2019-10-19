@@ -19,7 +19,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _constraint2OpenLogEntry()
         , _log()
         , _generator()
-        , _fout()
+//        , _fout()
 {
     std::cout << "start SS constructor" << '\n';
     int i = 0;
@@ -30,7 +30,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         ++i;
     }
 
-    _fout.open(CSV_FILE_NAME);
+//    _fout.open(CSV_FILE_NAME);
 //    writeHeadLine();
 
     std::cout << "end SS constructor" << '\n';
@@ -90,7 +90,6 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
     ASSERT( _constraint2OpenLogEntry[constraintForSplitting] == nullptr );
 
     std::cout << "1 SS logPLConstraintSplit" << '\n';
-
 
     LogEntry *logEntry = new LogEntry( _numOfConstraints );
     logEntry->splittedConstraint = constraintForSplitting;
