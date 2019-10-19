@@ -33,8 +33,6 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 
     _fout.open(CSV_FILE_PATH, std::ios::out | std::ios::app);
     writeHeadLine();
-
-    std::cout << "end SS constructor" << '\n';
 }
 
 SplitSelector::~SplitSelector()
@@ -52,43 +50,9 @@ SplitSelector::~SplitSelector()
 
 PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
 {
-//    std::cout << "start SS getNextConstraint" << std::endl;
-//    if (_numOfConstraints == 0)
-//    {
-//        return nullptr;
-//    }
-//    PiecewiseLinearConstraint *constraint = nullptr;
-//    bool foundActiveConstraint = false;
-//    std::cout << "1 SS getNextConstraint" << std::endl;
-//    std::uniform_int_distribution<int> distribution( 0, _numOfConstraints - 1 );
-//    int i = 0;
-//    while ( !foundActiveConstraint )
-//    {
-//        std::cout << " 2 SS getNextConstraint" << std::endl;
-//        i = distribution( _generator );
-//        std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
-//        std::cout << "_numOfConstraints = " << _numOfConstraints << " SS 3.1 getNextConstraint" << std::endl;
-//        auto it = _plConstraints.begin();
-//        std::cout << "4 SS getNextConstraint" << std::endl;
-//        std::advance( it, i );
-//        std::cout << "5 SS getNextConstraint" << std::endl;
-//        constraint = *it;
-//        std::cout << "6 SS getNextConstraint" << std::endl;
-//
-//        if ( constraint != nullptr && constraint->isActive() )
-//        {
-//            std::cout << "7.5 SS getNextConstraint" << std::endl;
-//            foundActiveConstraint = true;
-//        }
-//        std::cout << "7 SS getNextConstraint" << std::endl;
-//    }
-//
-//    std::cout << "start SS getNextConstraint" << std::endl;
-//    return constraint;
     std::cout << "start SS getNextConstraint" << '\n';
 
     std::list<PiecewiseLinearConstraint *> activeConstraints;
-    std::cout << "1 SS getNextConstraint" << '\n';
     for (auto constraint: _plConstraints)
     {
         if ( constraint->isActive() )
@@ -100,7 +64,6 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
     std::cout << "activeConstraints.size() = " << activeConstraints.size() << " SS 2 getNextConstraint" << std::endl;
     if (activeConstraints.size() == 0)
     {
-        std::cout << "nulll SS getNextConstraint" << '\n';
         return nullptr;
     }
     PiecewiseLinearConstraint *constraint = nullptr;
@@ -108,13 +71,11 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
     int i = distribution( _generator );
 
     std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
-    std::cout << "_numOfConstraints = " << _numOfConstraints << " SS 3.1 getNextConstraint" << std::endl;
     auto it = activeConstraints.begin();
 
     std::advance( it, i );
     constraint = *it;
 
-    std::cout << "end SS getNextConstraint" << '\n';
     return constraint;
 }
 
@@ -125,29 +86,20 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
     ASSERT( _constraint2OpenLogEntry.find( constraintForSplitting ) != _constraint2OpenLogEntry.end() );
     ASSERT( _constraint2OpenLogEntry[constraintForSplitting] == nullptr );
 
-    std::cout << "1 SS logPLConstraintSplit" << '\n';
-
 
     LogEntry *logEntry = new LogEntry( _numOfConstraints );
     logEntry->splittedConstraint = constraintForSplitting;
     logEntry->numVisitedTreeStatesAtSplit = numVisitedTreeStates;
 
-    std::cout << "2 SS logPLConstraintSplit" << '\n';
-
     for ( auto constraint: _plConstraints )
     {
-//        std::cout << constraint << " 3 SS logPLConstraintSplit" << std::endl;
-
         int i = _constraint2index[constraint];
         logEntry->isActive[i] = constraint->isActive();
     }
 
-    std::cout << "4 SS logPLConstraintSplit" << '\n';
-
 
     _constraint2OpenLogEntry[constraintForSplitting] = logEntry;
     _log.push_back( logEntry );
-    std::cout << "start SS logPLConstraintSplit" << '\n';
 }
 
 void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates )
@@ -163,8 +115,6 @@ void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constrain
     logEntry->numVisitedTreeStatesAtUnsplit = numVisitedTreeStates;
 
     writeLogEntry(logEntry);
-
-    std::cout << "start SS logPLConstraintUnsplit" << '\n';
 }
 
 void SplitSelector::writeHeadLine()
