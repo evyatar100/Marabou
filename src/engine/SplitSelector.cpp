@@ -96,7 +96,7 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
 
     for ( auto constraint: _plConstraints )
     {
-        std::cout << constraint << " 3 SS logPLConstraintSplit" << std::endl;
+//        std::cout << constraint << " 3 SS logPLConstraintSplit" << std::endl;
 
         int i = _constraint2index[constraint];
         logEntry->isActive[i] = constraint->isActive();
