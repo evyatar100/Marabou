@@ -45,7 +45,7 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
 {
     std::cout << "start SS getNextConstraint" << '\n';
 
-    List<PiecewiseLinearConstraint *> activeConstraints;
+    std::list<PiecewiseLinearConstraint *> activeConstraints;
     for (auto constraint: _plConstraints)
     {
         if ( constraint->isActive() )
