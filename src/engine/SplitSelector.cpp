@@ -45,37 +45,70 @@ SplitSelector::~SplitSelector()
 
 PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
 {
-    std::cout << "start SS getNextConstraint" << '\n';
-
-    std::list<PiecewiseLinearConstraint *> activeConstraints;
-    std::cout << "1 SS getNextConstraint" << '\n';
-    for (auto constraint: _plConstraints)
+    std::cout << "start SS getNextConstraint" << std::endl;
+    if (_numOfConstraints == 0)
     {
-        if ( constraint->isActive() )
-        {
-            activeConstraints.push_back(constraint);
-        }
-    }
-
-    std::cout << "activeConstraints.size() = " << activeConstraints.size() << " SS 2 getNextConstraint" << std::endl;
-    if (activeConstraints.size() == 0)
-    {
-        std::cout << "nulll SS getNextConstraint" << '\n';
         return nullptr;
     }
     PiecewiseLinearConstraint *constraint = nullptr;
-    std::uniform_int_distribution<int> distribution( 0, activeConstraints.size() - 1 );
-    int i = distribution( _generator );
+    bool foundActiveConstraint = false;
+    std::cout << "1 SS getNextConstraint" << std::endl;
+    std::uniform_int_distribution<int> distribution( 0, _numOfConstraints - 1 );
+    int i = 0;
+    while ( !foundActiveConstraint )
+    {
+        std::cout << " 2 SS getNextConstraint" << std::endl;
+        i = distribution( _generator );
+        std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
+        std::cout << "_numOfConstraints = " << _numOfConstraints << " SS 3.1 getNextConstraint" << std::endl;
+        auto it = _plConstraints.begin();
+        std::cout << "4 SS getNextConstraint" << std::endl;
+        std::advance( it, i );
+        std::cout << "5 SS getNextConstraint" << std::endl;
+        constraint = *it;
+        std::cout << "6 SS getNextConstraint" << std::endl;
 
-    std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
-    std::cout << "_numOfConstraints = " << _numOfConstraints << " SS 3.1 getNextConstraint" << std::endl;
-    auto it = _plConstraints.begin();
+        if ( constraint != nullptr && constraint->isActive() )
+        {
+            std::cout << "7.5 SS getNextConstraint" << std::endl;
+            foundActiveConstraint = true;
+        }
+        std::cout << "7 SS getNextConstraint" << std::endl;
+    }
 
-    std::advance( it, i );
-    constraint = *it;
-
-    std::cout << "end SS getNextConstraint" << '\n';
+    std::cout << "start SS getNextConstraint" << std::endl;
     return constraint;
+//    std::cout << "start SS getNextConstraint" << '\n';
+//
+//    std::list<PiecewiseLinearConstraint *> activeConstraints;
+//    std::cout << "1 SS getNextConstraint" << '\n';
+//    for (auto constraint: _plConstraints)
+//    {
+//        if ( constraint->isActive() )
+//        {
+//            activeConstraints.push_back(constraint);
+//        }
+//    }
+//
+//    std::cout << "activeConstraints.size() = " << activeConstraints.size() << " SS 2 getNextConstraint" << std::endl;
+//    if (activeConstraints.size() == 0)
+//    {
+//        std::cout << "nulll SS getNextConstraint" << '\n';
+//        return nullptr;
+//    }
+//    PiecewiseLinearConstraint *constraint = nullptr;
+//    std::uniform_int_distribution<int> distribution( 0, activeConstraints.size() - 1 );
+//    int i = distribution( _generator );
+//
+//    std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
+//    std::cout << "_numOfConstraints = " << _numOfConstraints << " SS 3.1 getNextConstraint" << std::endl;
+//    auto it = _plConstraints.begin();
+//
+//    std::advance( it, i );
+//    constraint = *it;
+//
+//    std::cout << "end SS getNextConstraint" << '\n';
+//    return constraint;
 }
 
 void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates )
