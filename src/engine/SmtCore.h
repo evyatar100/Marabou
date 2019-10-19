@@ -30,8 +30,6 @@ class SmtCore
 {
 public:
     SmtCore( IEngine *engine );
-    SmtCore( IEngine *engine,
-             List<PiecewiseLinearConstraint *> plConstraints );
 
     ~SmtCore();
 
@@ -39,6 +37,8 @@ public:
       Clear the stack.
     */
     void freeMemory();
+
+    void setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints );
 
     /*
       Inform the SMT core that a PL constraint is violated.

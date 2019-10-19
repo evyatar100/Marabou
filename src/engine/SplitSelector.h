@@ -14,10 +14,11 @@
 class SplitSelector
 {
 public:
-    SplitSelector(
-            List<PiecewiseLinearConstraint *> plConstraints );
+    SplitSelector();
 
     ~SplitSelector();
+
+    void setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints );
 
     PiecewiseLinearConstraint *getNextConstraint();
 

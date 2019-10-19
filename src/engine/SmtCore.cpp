@@ -22,17 +22,6 @@
 #include "MarabouError.h"
 #include "SmtCore.h"
 
-SmtCore::SmtCore( IEngine *engine,
-                  List<PiecewiseLinearConstraint *> plConstraints )
-        : _statistics( NULL )
-          , _engine( engine )
-          , _needToSplit( false )
-          , _constraintForSplitting( NULL )
-          , _splitSelector( new SplitSelector( plConstraints ) )
-          , _stateId( 0 )
-{
-}
-
 SmtCore::SmtCore( IEngine *engine )
         : _statistics( NULL )
           , _engine( engine )
@@ -51,7 +40,6 @@ SmtCore::~SmtCore()
         delete _splitSelector;
         _splitSelector = nullptr;
     }
-
 }
 
 void SmtCore::freeMemory()
@@ -63,6 +51,11 @@ void SmtCore::freeMemory()
     }
 
     _stack.clear();
+}
+
+void setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints )
+{
+    _splitSelector->setPLConstrainsList(plConstraints);
 }
 
 void SmtCore::reportViolatedConstraint( PiecewiseLinearConstraint *constraint )

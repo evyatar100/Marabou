@@ -8,10 +8,10 @@
 
 #include "Debug.h"
 
-SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
+SplitSelector::SplitSelector()
         :
-        _plConstraints( plConstraints )
-        , _numOfConstraints( plConstraints.size() )
+        _plConstraints()
+        , _numOfConstraints(0)
         , _constraint2index()
         , _constraint2OpenLogEntry()
         , _log()
@@ -31,6 +31,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 SplitSelector::~SplitSelector()
 {
     std::cout << '\n' << "SplitSelector statistics:" << '\n';
+
     for ( auto logEntry: _log )
     {
         int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
@@ -41,9 +42,20 @@ SplitSelector::~SplitSelector()
 
 }
 
+void setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints )
+{
+    _plConstraints = plConstraints;
+    _numOfConstraints = plConstraints.size();
+}
+
+
 PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
 {
     std::cout << "start SS getNextConstraint" << std::endl;
+    if (_numOfConstraints == 0)
+    {
+        return nullptr;
+    }
     PiecewiseLinearConstraint *constraint = nullptr;
     bool foundActiveConstraint = false;
     std::cout << "1 SS getNextConstraint" << std::endl;
