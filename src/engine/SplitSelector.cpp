@@ -46,7 +46,7 @@ SplitSelector::~SplitSelector()
         std::cout << "size of subtree: " << size << '\n';
         delete logEntry;
     }
-    _fout.close();
+//    _fout.close();
 
 }
 
@@ -130,25 +130,25 @@ void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constrain
     std::cout << "start SS logPLConstraintUnsplit" << '\n';
 }
 
-void SplitSelector::writeHeadLine()
-{
-    _fout << "current constraint" << ", " << "sub-tree size";
-    for (auto constraint: _plConstraints)
-    {
-        _fout << ", " << constraint;
-    }
-
-    _fout << "\n";
-}
-
-void SplitSelector::writeLogEntry(LogEntry* logEntry)
-{
-    int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
-    _fout << logEntry->splittedConstraint << ", " << size;
-    for (auto x: logEntry->isActive)
-    {
-        _fout << ", " << x;
-    }
-
-    _fout << "\n";
-}
+//void SplitSelector::writeHeadLine()
+//{
+//    _fout << "current constraint" << ", " << "sub-tree size";
+//    for (auto constraint: _plConstraints)
+//    {
+//        _fout << ", " << constraint;
+//    }
+//
+//    _fout << "\n";
+//}
+//
+//void SplitSelector::writeLogEntry(LogEntry* logEntry)
+//{
+//    int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
+//    _fout << logEntry->splittedConstraint << ", " << size;
+//    for (auto x: logEntry->isActive)
+//    {
+//        _fout << ", " << x;
+//    }
+//
+//    _fout << "\n";
+//}
