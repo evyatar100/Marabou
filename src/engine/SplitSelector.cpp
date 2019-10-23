@@ -46,6 +46,8 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 //    auto now = std::chrono::high_resolution_clock::now();
 
     _fout.open(CSV_FILE_PATH, std::ios::out);
+    _fout.close();
+    _fout.open(CSV_FILE_PATH, std::ios::out);
     writeHeadLine();
 }
 
