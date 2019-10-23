@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include <time>
+#include <ctime>
 
 
 #include <list>
