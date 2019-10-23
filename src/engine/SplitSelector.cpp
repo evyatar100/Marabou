@@ -52,7 +52,9 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
     tm = localtime (&tv.tv_sec);
     strftime (fmt, sizeof (fmt), "%H:%M:%S:%%06u", tm);
     snprintf (buf, sizeof (buf), fmt, tv.tv_usec);
-    _csvPath << CSV_FILE_PATH << buf << ".csv";
+    _csvPath.append(CSV_FILE_PATH);
+    _csvPath.append(buf);
+    _csvPath.append(".csv");
 
     _fout.open(_csvPath, std::ios::out);
     _fout.close();
