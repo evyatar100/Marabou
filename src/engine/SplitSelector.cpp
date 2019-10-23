@@ -22,7 +22,8 @@
 #define CSV_FILE_PATH "splitSelector_statistics/"
 
 void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
-void generateCSVPath(std::string &path);
+std::string generateCSVPath();
+
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
@@ -37,7 +38,6 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 {
     std::random_device r;
     _generator = std::default_random_engine( r() );
-//    _generator( r() );
 
     std::cout << "start SS constructor" << '\n';
     int i = 0;
@@ -48,7 +48,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         ++i;
     }
 
-    generateCSVPath(&_csvPath);
+    _csvPath = generateCSVPath();
 
     _fout.open(_csvPath, std::ios::out);
     _fout.close();
@@ -163,7 +163,7 @@ void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint)
     std::replace( s->begin(), s->end(), ',', COMMA_REPLACEMENT); // replace all ',' to COMMA_REPLACEMENT
 }
 
-void generateCSVPath(std::string *path)
+std::string generateCSVPath()
 {
     char fmt[64];
     char buf[64];
@@ -174,10 +174,12 @@ void generateCSVPath(std::string *path)
     tm = localtime (&tv.tv_sec);
     strftime (fmt, sizeof (fmt), "%F-%H-%M-%S-%%06u", tm);
     snprintf (buf, sizeof (buf), fmt, tv.tv_usec);
-    *path = "";
-    path->append(CSV_FILE_PATH);
-    path->append(buf);
-    path->append(".csv");
+    std::string path = "";
+    path.append(CSV_FILE_PATH);
+    path.append(buf);
+    path.append(".csv");
 
-    std::cout << '\n' << *path << '\n';
+    std::cout << '\n' << path << '\n';
+
+    return path;
 }
