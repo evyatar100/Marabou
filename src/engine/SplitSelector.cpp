@@ -60,20 +60,13 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 
     _fout.open(_csvPath, std::ios::out);
     _fout.close();
-    _fout.open(_csvPath, std::ios::out);
+    _fout.open(_csvPath, std::ios::out | std::ios::app);
     writeHeadLine();
 }
 
 SplitSelector::~SplitSelector()
 {
     std::cout << '\n' << "SplitSelector deleted" << '\n';
-//    for ( auto logEntry: _log )
-//    {
-//        int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
-//        std::cout << "splittedConstraint: " << logEntry->splittedConstraint << '\t';
-//        std::cout << "size of subtree: " << size << '\n';
-//        delete logEntry;
-//    }
     _fout.close();
 }
 
