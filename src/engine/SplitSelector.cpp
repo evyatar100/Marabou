@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#include <ctime>
+#include <chrono>
 
 
 #include <list>
@@ -17,8 +17,10 @@
 #include "Debug.h"
 #include <stdlib.h>
 
+#define COMMA_REPLACEMENT "$"
 
-#define CSV_FILE_PATH "SplitSelector_statistics"
+
+#define CSV_FILE_PATH "SplitSelector_statistics/"
 
 void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
 
@@ -41,10 +43,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         _constraint2OpenLogEntry[constraint] = nullptr;
         ++i;
     }
-//    std::time_t t = std::time(0);
-//    std::tm* now = std::localtime(&t);
-//    _csvPath << CSV_FILE_PATH << "-" <<now->tm_hour<< "-" << now->tm_min << "-"<< now->tm_sec << ".csv";
-
+    auto now = std::chrono::high_resolution_clock::now();
 
     _fout.open(CSV_FILE_PATH, std::ios::out);
     writeHeadLine();
@@ -164,7 +163,6 @@ void SplitSelector::writeLogEntry(LogEntry* logEntry)
 void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint)
 {
     ReluConstraint *relu = (ReluConstraint*) constraint;
-    const char* c = relu->serializeToString().ascii();
-    *s = c;
-    std::replace( s->begin(), s->end(), ',', '-'); // replace all ',' to '-'
+    *s = relu->serializeToString().ascii();
+    std::replace( s->begin(), s->end(), ",", COMMA_REPLACEMENT); // replace all ',' to COMMA_REPLACEMENT
 }
