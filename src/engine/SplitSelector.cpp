@@ -20,7 +20,7 @@
 #define COMMA_REPLACEMENT '.'
 
 
-#define CSV_FILE_PATH "SplitSelector_statistics2.csv"
+#define CSV_FILE_PATH "SplitSelector_statistics//"
 
 void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
 
@@ -43,20 +43,20 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         _constraint2OpenLogEntry[constraint] = nullptr;
         ++i;
     }
-//    char fmt[64];
-//    char buf[64];
-//    struct timeval tv;
-//    struct tm *tm;
-//
-//    gettimeofday (&tv, NULL);
-//    tm = localtime (&tv.tv_sec);
-//    strftime (fmt, sizeof (fmt), "%H:%M:%S:%%06u", tm);
-//    snprintf (buf, sizeof (buf), fmt, tv.tv_usec);
-//    _csvPath << CSV_FILE_PATH << buf << ".csv";
+    char fmt[64];
+    char buf[64];
+    struct timeval tv;
+    struct tm *tm;
 
-    _fout.open(CSV_FILE_PATH, std::ios::out);
+    gettimeofday (&tv, NULL);
+    tm = localtime (&tv.tv_sec);
+    strftime (fmt, sizeof (fmt), "%H:%M:%S:%%06u", tm);
+    snprintf (buf, sizeof (buf), fmt, tv.tv_usec);
+    _csvPath << CSV_FILE_PATH << buf << ".csv";
+
+    _fout.open(_csvPath, std::ios::out);
     _fout.close();
-    _fout.open(CSV_FILE_PATH, std::ios::out);
+    _fout.open(_csvPath, std::ios::out);
     writeHeadLine();
 }
 
