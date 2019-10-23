@@ -11,6 +11,7 @@
 
 
 #include <list>
+#include <vector>
 #include <string>
 
 #include "Debug.h"
@@ -64,7 +65,7 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
 {
     std::cout << "start SS getNextConstraint" << '\n';
 
-    std::list<PiecewiseLinearConstraint *> activeConstraints;
+    std::vector<PiecewiseLinearConstraint *> activeConstraints(_numOfConstraints);
     for (auto constraint: _plConstraints)
     {
         if ( constraint->isActive() )
@@ -78,17 +79,17 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
     {
         return nullptr;
     }
-    PiecewiseLinearConstraint *constraint = nullptr;
+//    PiecewiseLinearConstraint *constraint = nullptr;
     std::uniform_int_distribution<int> distribution( 0, activeConstraints.size() - 1 );
     int i = distribution( _generator );
 
     std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
-    auto it = activeConstraints.begin();
+//    auto it = activeConstraints.begin();
 
-    std::advance( it, i );
-    constraint = *it;
+//    std::advance( it, i );
+    return activeConstraints[i];
 
-    return constraint;
+//    return constraint;
 }
 
 void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates )
