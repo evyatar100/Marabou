@@ -138,7 +138,7 @@ void SplitSelector::writeHeadLine()
     for (auto constraint: _plConstraints)
     {
         tempRelu = (ReluConstraint*) constraint;
-        _fout << ", " << *( tempRelu->serializeToString() );
+        _fout << ", " << tempRelu->serializeToString().c_str();
     }
 
     _fout << "\n";
@@ -148,7 +148,7 @@ void SplitSelector::writeLogEntry(LogEntry* logEntry)
 {
     int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
     ReluConstraint *tempRelu = (ReluConstraint*) logEntry->splittedConstraint;
-    _fout << *( tempRelu->serializeToString() ) << ", " << size;
+    _fout << tempRelu->serializeToString().c_str() << ", " << size;
     for (auto x: logEntry->isActive)
     {
         _fout << ", " << x;
