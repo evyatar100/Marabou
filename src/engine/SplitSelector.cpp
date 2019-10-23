@@ -7,6 +7,9 @@
 
 #include <iostream>
 
+#include <time>
+
+
 #include <list>
 #include <string>
 
@@ -14,7 +17,7 @@
 #include <stdlib.h>
 
 
-#define CSV_FILE_PATH "SplitSelector_statistics.csv"
+#define CSV_FILE_PATH "SplitSelector_statistics"
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
@@ -25,6 +28,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _log()
         , _generator()
         , _fout()
+        , _csvPath()
 {
     std::cout << "start SS constructor" << '\n';
     int i = 0;
@@ -34,6 +38,10 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         _constraint2OpenLogEntry[constraint] = nullptr;
         ++i;
     }
+//    std::time_t t = std::time(0);
+//    std::tm* now = std::localtime(&t);
+//    _csvPath << CSV_FILE_PATH << "-" <<now->tm_hour<< "-" << now->tm_min << "-"<< now->tm_sec << ".csv";
+
 
     _fout.open(CSV_FILE_PATH, std::ios::out);
     writeHeadLine();
@@ -130,7 +138,7 @@ void SplitSelector::writeHeadLine()
     for (auto constraint: _plConstraints)
     {
         tempRelu = (ReluConstraint*) constraint;
-        _fout << ", " << tempRelu->serializeToString();
+        _fout << ", " << *( tempRelu->serializeToString() );
     }
 
     _fout << "\n";
@@ -140,7 +148,7 @@ void SplitSelector::writeLogEntry(LogEntry* logEntry)
 {
     int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
     ReluConstraint *tempRelu = (ReluConstraint*) logEntry->splittedConstraint;
-    _fout << tempRelu->serializeToString() << ", " << size;
+    _fout << *( tempRelu->serializeToString() ) << ", " << size;
     for (auto x: logEntry->isActive)
     {
         _fout << ", " << x;

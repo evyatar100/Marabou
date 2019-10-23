@@ -9,6 +9,7 @@
 #include <map>
 #include <random>
 #include <vector>
+#include <string>
 #include <list>
 #include <fstream>
 
@@ -65,6 +66,10 @@ private:
     std::default_random_engine _generator;
 
     std::fstream _fout;
+
+    std::string _csvPath;
+
+
 
     void writeHeadLine();
     void writeLogEntry(LogEntry* logEntry);
