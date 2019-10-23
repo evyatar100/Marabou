@@ -36,7 +36,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _csvPath()
 {
     std::random_device r;
-    _generator = std::default_random_engine( r() )
+    _generator = std::default_random_engine( r() );
 //    _generator( r() );
 
     std::cout << "start SS constructor" << '\n';
@@ -163,7 +163,7 @@ void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint)
     std::replace( s->begin(), s->end(), ',', COMMA_REPLACEMENT); // replace all ',' to COMMA_REPLACEMENT
 }
 
-void generateCSVPath(std::string &path)
+void generateCSVPath(std::string *path)
 {
     char fmt[64];
     char buf[64];
