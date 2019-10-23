@@ -20,7 +20,7 @@
 #define COMMA_REPLACEMENT "$"
 
 
-#define CSV_FILE_PATH "SplitSelector_statistics/"
+#define CSV_FILE_PATH "SplitSelector_statistics/a.csv"
 
 void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
 
@@ -43,7 +43,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         _constraint2OpenLogEntry[constraint] = nullptr;
         ++i;
     }
-    auto now = std::chrono::high_resolution_clock::now();
+//    auto now = std::chrono::high_resolution_clock::now();
 
     _fout.open(CSV_FILE_PATH, std::ios::out);
     writeHeadLine();
