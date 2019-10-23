@@ -35,6 +35,8 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _fout()
         , _csvPath()
 {
+    srand( time(NULL) );
+
     std::cout << "start SS constructor" << '\n';
     int i = 0;
     for ( auto constraint: _plConstraints )
@@ -88,14 +90,10 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
     {
         return nullptr;
     }
-//    PiecewiseLinearConstraint *constraint = nullptr;
     std::uniform_int_distribution<int> distribution( 0, activeConstraints.size() - 1 );
     int i = distribution( _generator );
 
     std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
-//    auto it = activeConstraints.begin();
-
-//    std::advance( it, i );
     return activeConstraints[i];
 
 //    return constraint;

@@ -70,7 +70,6 @@ private:
     std::string _csvPath;
 
 
-
     void writeHeadLine();
     void writeLogEntry(LogEntry* logEntry);
 };
