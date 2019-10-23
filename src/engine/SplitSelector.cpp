@@ -23,7 +23,7 @@
 #define CSV_FILE_PATH "splitSelector_statistics/"
 
 void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
-void generateCSVPath();
+void generateCSVPath(std::string &path);
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
@@ -48,7 +48,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         ++i;
     }
 
-    generateCSVPath();
+    generateCSVPath(&_csvPath);
 
     _fout.open(_csvPath, std::ios::out);
     _fout.close();
@@ -163,7 +163,7 @@ void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint)
     std::replace( s->begin(), s->end(), ',', COMMA_REPLACEMENT); // replace all ',' to COMMA_REPLACEMENT
 }
 
-void generateCSVPath()
+void generateCSVPath(std::string &path)
 {
     char fmt[64];
     char buf[64];
@@ -174,9 +174,10 @@ void generateCSVPath()
     tm = localtime (&tv.tv_sec);
     strftime (fmt, sizeof (fmt), "%F-%H-%M-%S-%%06u", tm);
     snprintf (buf, sizeof (buf), fmt, tv.tv_usec);
-    _csvPath.append(CSV_FILE_PATH);
-    _csvPath.append(buf);
-    _csvPath.append(".csv");
+    *path = "";
+    path->append(CSV_FILE_PATH);
+    path->append(buf);
+    path->append(".csv");
 
-    std::cout << '\n' << _csvPath << '\n';
+    std::cout << '\n' << *path << '\n';
 }
