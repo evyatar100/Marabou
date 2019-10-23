@@ -164,7 +164,7 @@ void SplitSelector::writeLogEntry(LogEntry* logEntry)
 void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint)
 {
     ReluConstraint *relu = (ReluConstraint*) constraint;
-    char* c = relu->serializeToString().ascii();
+    const char* c = relu->serializeToString().ascii();
     *s = c;
     std::replace( s->begin(), s->end(), ',', '-'); // replace all ',' to '-'
 }
