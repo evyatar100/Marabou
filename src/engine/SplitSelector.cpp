@@ -19,7 +19,6 @@
 
 #define COMMA_REPLACEMENT '.'
 
-
 #define CSV_FILE_PATH "splitSelector_statistics/"
 
 void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
