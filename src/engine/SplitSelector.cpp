@@ -47,7 +47,6 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 
     _fout.open(CSV_FILE_PATH, std::ios::out);
     _fout.close();
-    exit(0);
     _fout.open(CSV_FILE_PATH, std::ios::out);
     writeHeadLine();
 }
