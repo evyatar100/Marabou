@@ -20,7 +20,7 @@
 
 #define CSV_FILE_PATH "SplitSelector_statistics"
 
-void *constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
+void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
@@ -140,7 +140,7 @@ void SplitSelector::writeHeadLine()
     std::string constraintName;
     for (auto constraint: _plConstraints)
     {
-        constraint2String(&constraintName, logEntry->splittedConstraint);
+        constraint2String(&constraintName, constraint);
         _fout << ", " << constraintName;
     }
 
@@ -165,6 +165,6 @@ void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint)
 {
     ReluConstraint *relu = (ReluConstraint*) constraint;
     char* c = relu->serializeToString().ascii();
-    s(c);
+    *s = c;
     std::replace( s->begin(), s->end(), ',', '-'); // replace all ',' to '-'
 }
