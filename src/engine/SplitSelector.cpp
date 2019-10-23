@@ -17,7 +17,7 @@
 #include "Debug.h"
 #include <stdlib.h>
 
-#define COMMA_REPLACEMENT '$'
+#define COMMA_REPLACEMENT '.'
 
 
 #define CSV_FILE_PATH "SplitSelector_statistics.csv"
