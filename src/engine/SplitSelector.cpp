@@ -23,6 +23,7 @@
 #define CSV_FILE_PATH "splitSelector_statistics/"
 
 void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
+void generateCSVPath();
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
@@ -35,7 +36,8 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _fout()
         , _csvPath()
 {
-    srand( time(NULL) );
+    std::random_device r;
+    _generator( r() );
 
     std::cout << "start SS constructor" << '\n';
     int i = 0;
@@ -45,20 +47,8 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         _constraint2OpenLogEntry[constraint] = nullptr;
         ++i;
     }
-    char fmt[64];
-    char buf[64];
-    struct timeval tv;
-    struct tm *tm;
 
-    gettimeofday (&tv, NULL);
-    tm = localtime (&tv.tv_sec);
-    strftime (fmt, sizeof (fmt), "%F-%H-%M-%S-%%06u", tm);
-    snprintf (buf, sizeof (buf), fmt, tv.tv_usec);
-    _csvPath.append(CSV_FILE_PATH);
-    _csvPath.append(buf);
-    _csvPath.append(".csv");
-    std::cout << '\n' << _csvPath << '\n';
-
+    generateCSVPath();
 
     _fout.open(_csvPath, std::ios::out);
     _fout.close();
@@ -171,4 +161,22 @@ void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint)
     ReluConstraint *relu = (ReluConstraint*) constraint;
     *s = relu->serializeToString().ascii();
     std::replace( s->begin(), s->end(), ',', COMMA_REPLACEMENT); // replace all ',' to COMMA_REPLACEMENT
+}
+
+void generateCSVPath()
+{
+    char fmt[64];
+    char buf[64];
+    struct timeval tv;
+    struct tm *tm;
+
+    gettimeofday (&tv, NULL);
+    tm = localtime (&tv.tv_sec);
+    strftime (fmt, sizeof (fmt), "%F-%H-%M-%S-%%06u", tm);
+    snprintf (buf, sizeof (buf), fmt, tv.tv_usec);
+    _csvPath.append(CSV_FILE_PATH);
+    _csvPath.append(buf);
+    _csvPath.append(".csv");
+
+    std::cout << '\n' << _csvPath << '\n';
 }
