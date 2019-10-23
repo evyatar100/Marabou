@@ -36,7 +36,8 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _csvPath()
 {
     std::random_device r;
-    _generator( r() );
+    _generator = std::default_random_engine( r() )
+//    _generator( r() );
 
     std::cout << "start SS constructor" << '\n';
     int i = 0;
