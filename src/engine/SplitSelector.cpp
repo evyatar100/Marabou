@@ -3,10 +3,12 @@
 //
 
 #include "SplitSelector.h"
+#include "ReluConstraint.h"
 
 #include <iostream>
 
 #include <list>
+#include <string>
 
 #include "Debug.h"
 #include <stdlib.h>
@@ -40,13 +42,13 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 SplitSelector::~SplitSelector()
 {
     std::cout << '\n' << "SplitSelector statistics:" << '\n';
-    for ( auto logEntry: _log )
-    {
-        int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
-        std::cout << "splittedConstraint: " << logEntry->splittedConstraint << '\t';
-        std::cout << "size of subtree: " << size << '\n';
-        delete logEntry;
-    }
+//    for ( auto logEntry: _log )
+//    {
+//        int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
+//        std::cout << "splittedConstraint: " << logEntry->splittedConstraint << '\t';
+//        std::cout << "size of subtree: " << size << '\n';
+//        delete logEntry;
+//    }
     _fout.close();
 }
 
@@ -101,7 +103,7 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
 
 
     _constraint2OpenLogEntry[constraintForSplitting] = logEntry;
-    _log.push_back( logEntry );
+//    _log.push_back( logEntry );
 }
 
 void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates )
@@ -117,14 +119,18 @@ void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constrain
     logEntry->numVisitedTreeStatesAtUnsplit = numVisitedTreeStates;
 
     writeLogEntry(logEntry);
+
+    delete logEntry;
 }
 
 void SplitSelector::writeHeadLine()
 {
     _fout << "current constraint" << ", " << "sub-tree size";
+    ReluConstraint *tempRelu;
     for (auto constraint: _plConstraints)
     {
-        _fout << ", " << constraint;
+        tempRelu = (ReluConstraint*) constraint;
+        _fout << ", " << tempRelu->serializeToString();
     }
 
     _fout << "\n";
@@ -133,7 +139,8 @@ void SplitSelector::writeHeadLine()
 void SplitSelector::writeLogEntry(LogEntry* logEntry)
 {
     int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
-    _fout << logEntry->splittedConstraint << ", " << size;
+    ReluConstraint *tempRelu = (ReluConstraint*) logEntry->splittedConstraint;
+    _fout << tempRelu->serializeToString() << ", " << size;
     for (auto x: logEntry->isActive)
     {
         _fout << ", " << x;
