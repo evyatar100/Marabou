@@ -17,7 +17,7 @@
 #include "Debug.h"
 #include <stdlib.h>
 
-#define COMMA_REPLACEMENT "$"
+#define COMMA_REPLACEMENT '$'
 
 
 #define CSV_FILE_PATH "SplitSelector_statistics/a.csv"
@@ -164,5 +164,5 @@ void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint)
 {
     ReluConstraint *relu = (ReluConstraint*) constraint;
     *s = relu->serializeToString().ascii();
-    std::replace( s->begin(), s->end(), ",", COMMA_REPLACEMENT); // replace all ',' to COMMA_REPLACEMENT
+    std::replace( s->begin(), s->end(), ',', COMMA_REPLACEMENT); // replace all ',' to COMMA_REPLACEMENT
 }
