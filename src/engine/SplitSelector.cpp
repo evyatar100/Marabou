@@ -50,7 +50,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 
     gettimeofday (&tv, NULL);
     tm = localtime (&tv.tv_sec);
-    strftime (fmt, sizeof (fmt), "%H-%M-%S-%%06u", tm);
+    strftime (fmt, sizeof (fmt), "%D-%H-%M-%S-%%06u", tm);
     snprintf (buf, sizeof (buf), fmt, tv.tv_usec);
     _csvPath.append(CSV_FILE_PATH);
     _csvPath.append(buf);
