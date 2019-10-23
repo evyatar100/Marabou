@@ -20,6 +20,8 @@
 
 #define CSV_FILE_PATH "SplitSelector_statistics"
 
+void *constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
+
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
         _plConstraints( plConstraints )
@@ -50,7 +52,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 
 SplitSelector::~SplitSelector()
 {
-    std::cout << '\n' << "SplitSelector statistics:" << '\n';
+    std::cout << '\n' << "SplitSelector deleted" << '\n';
 //    for ( auto logEntry: _log )
 //    {
 //        int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
@@ -135,11 +137,11 @@ void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constrain
 void SplitSelector::writeHeadLine()
 {
     _fout << "current constraint" << ", " << "sub-tree size";
-    ReluConstraint *tempRelu;
+    std::string constraintName;
     for (auto constraint: _plConstraints)
     {
-        tempRelu = (ReluConstraint*) constraint;
-        _fout << ", " << tempRelu->serializeToString().ascii();
+        constraint2String(&constraintName, logEntry->splittedConstraint);
+        _fout << ", " << constraintName;
     }
 
     _fout << "\n";
@@ -148,12 +150,21 @@ void SplitSelector::writeHeadLine()
 void SplitSelector::writeLogEntry(LogEntry* logEntry)
 {
     int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
-    ReluConstraint *tempRelu = (ReluConstraint*) logEntry->splittedConstraint;
-    _fout << tempRelu->serializeToString().ascii() << ", " << size;
+    std::string constraintName;
+    constraint2String(&constraintName, logEntry->splittedConstraint);
+    _fout << constraintName << ", " << size;
     for (auto x: logEntry->isActive)
     {
         _fout << ", " << x;
     }
 
     _fout << "\n";
+}
+
+void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint)
+{
+    ReluConstraint *relu = (ReluConstraint*) constraint;
+    char* c = relu->serializeToString().ascii();
+    s(c);
+    std::replace( s->begin(), s->end(), ',', '-'); // replace all ',' to '-'
 }
