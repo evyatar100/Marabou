@@ -116,7 +116,7 @@ void SmtCore::performSplit( List<PiecewiseLinearConstraint *> *plConstraintsOpti
         {
             _constraintForSplitting = constraint;
         }
-        _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates() );
+        _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates(), plConstraintsOptions );
     }
 
 

@@ -101,7 +101,6 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint( List<PiecewiseLinea
     std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
     return activeConstraints[i];
 
-//    return constraint;
 }
 
 void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates, List<PiecewiseLinearConstraint *> *plConstraintsOptions )
@@ -120,6 +119,7 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
     {
         int i = _constraint2index[constraint];
         logEntry->isActive[i] = constraint->isActive();
+
     }
 
     if ( plConstraintsOptions != nullptr )
@@ -128,6 +128,14 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
         {
             int i = _constraint2index[constraint];
             logEntry->isViolated[i] = true;
+        }
+    }
+    else
+    {
+        for ( auto constraint: _plConstraints )
+        {
+            int i = _constraint2index[constraint];
+            logEntry->isViolated[i] = -1;
         }
     }
 
