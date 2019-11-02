@@ -61,7 +61,7 @@ SplitSelector::~SplitSelector()
     _fout.close();
 }
 
-PiecewiseLinearConstraint *SplitSelector::getNextConstraint( List<PiecewiseLinearConstraint *> *plConstraintsOptions = nullptr )
+PiecewiseLinearConstraint *SplitSelector::getNextConstraint( List<PiecewiseLinearConstraint *> *plConstraintsOptions )
 {
     std::cout << "start SS getNextConstraint" << '\n';
 
