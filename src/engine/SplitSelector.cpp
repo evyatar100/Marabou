@@ -21,7 +21,8 @@
 
 #define CSV_FILE_PATH "splitSelector_statistics/"
 
-void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint);
+void constraint2String( std::string *s, PiecewiseLinearConstraint *constraint );
+
 std::string generateCSVPath();
 
 
@@ -36,7 +37,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _fout()
         , _csvPath()
 {
-    _generator = std::default_random_engine( static_cast<long unsigned int>(time(0)) );
+    _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) );
 
     std::cout << "start SS constructor" << '\n';
     int i = 0;
@@ -49,9 +50,9 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
 
     _csvPath = generateCSVPath();
 
-    _fout.open(_csvPath, std::ios::out);
+    _fout.open( _csvPath, std::ios::out );
     _fout.close();
-    _fout.open(_csvPath, std::ios::out | std::ios::app);
+    _fout.open( _csvPath, std::ios::out | std::ios::app );
     writeHeadLine();
 }
 
@@ -61,21 +62,34 @@ SplitSelector::~SplitSelector()
     _fout.close();
 }
 
-PiecewiseLinearConstraint *SplitSelector::getNextConstraint()
+PiecewiseLinearConstraint *SplitSelector::getNextConstraint( List<PiecewiseLinearConstraint *> *plConstraintsOptions = nullptr )
 {
     std::cout << "start SS getNextConstraint" << '\n';
 
-    std::vector<PiecewiseLinearConstraint *> activeConstraints;
-    for (auto constraint: _plConstraints)
+    std::vector < PiecewiseLinearConstraint * > activeConstraints;
+    if ( plConstraintsOptions == nullptr )
     {
-        if ( constraint->isActive() )
+        for ( auto constraint: _plConstraints )
         {
-            activeConstraints.push_back(constraint);
+            if ( constraint->isActive() )
+            {
+                activeConstraints.push_back( constraint );
+            }
+        }
+    }
+    else
+    {
+        for ( auto constraint: *plConstraintsOptions )
+        {
+            if ( constraint->isActive() )
+            {
+                activeConstraints.push_back( constraint );
+            }
         }
     }
 
     std::cout << "activeConstraints.size() = " << activeConstraints.size() << " SS 2 getNextConstraint" << std::endl;
-    if (activeConstraints.size() == 0)
+    if ( activeConstraints.size() == 0 )
     {
         return nullptr;
     }
@@ -123,7 +137,7 @@ void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constrain
 
     logEntry->numVisitedTreeStatesAtUnsplit = numVisitedTreeStates;
 
-    writeLogEntry(logEntry);
+    writeLogEntry( logEntry );
 
     delete logEntry;
 }
@@ -132,22 +146,22 @@ void SplitSelector::writeHeadLine()
 {
     _fout << "current constraint" << ", " << "sub-tree size";
     std::string constraintName;
-    for (auto constraint: _plConstraints)
+    for ( auto constraint: _plConstraints )
     {
-        constraint2String(&constraintName, constraint);
+        constraint2String( &constraintName, constraint );
         _fout << ", " << constraintName;
     }
 
     _fout << "\n";
 }
 
-void SplitSelector::writeLogEntry(LogEntry* logEntry)
+void SplitSelector::writeLogEntry( LogEntry *logEntry )
 {
     int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
     std::string constraintName;
-    constraint2String(&constraintName, logEntry->splittedConstraint);
+    constraint2String( &constraintName, logEntry->splittedConstraint );
     _fout << constraintName << ", " << size;
-    for (auto x: logEntry->isActive)
+    for ( auto x: logEntry->isActive )
     {
         _fout << ", " << x;
     }
@@ -155,11 +169,11 @@ void SplitSelector::writeLogEntry(LogEntry* logEntry)
     _fout << "\n";
 }
 
-void constraint2String(std::string *s, PiecewiseLinearConstraint *constraint)
+void constraint2String( std::string *s, PiecewiseLinearConstraint *constraint )
 {
-    ReluConstraint *relu = (ReluConstraint*) constraint;
+    ReluConstraint *relu = ( ReluConstraint * ) constraint;
     *s = relu->serializeToString().ascii();
-    std::replace( s->begin(), s->end(), ',', COMMA_REPLACEMENT); // replace all ',' to COMMA_REPLACEMENT
+    std::replace( s->begin(), s->end(), ',', COMMA_REPLACEMENT ); // replace all ',' to COMMA_REPLACEMENT
 }
 
 std::string generateCSVPath()
@@ -169,14 +183,14 @@ std::string generateCSVPath()
     struct timeval tv;
     struct tm *tm;
 
-    gettimeofday (&tv, NULL);
-    tm = localtime (&tv.tv_sec);
-    strftime (fmt, sizeof (fmt), "%F-%H-%M-%S-%%06u", tm);
-    snprintf (buf, sizeof (buf), fmt, tv.tv_usec);
+    gettimeofday( &tv, NULL );
+    tm = localtime( &tv.tv_sec );
+    strftime( fmt, sizeof( fmt ), "%F-%H-%M-%S-%%06u", tm );
+    snprintf( buf, sizeof( buf ), fmt, tv.tv_usec );
     std::string path = "";
-    path.append(CSV_FILE_PATH);
-    path.append(buf);
-    path.append(".csv");
+    path.append( CSV_FILE_PATH );
+    path.append( buf );
+    path.append( ".csv" );
 
     std::cout << '\n' << path << '\n';
 

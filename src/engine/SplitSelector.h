@@ -21,7 +21,7 @@ public:
 
     ~SplitSelector();
 
-    PiecewiseLinearConstraint *getNextConstraint();
+    PiecewiseLinearConstraint *getNextConstraint(List<PiecewiseLinearConstraint *> *plConstraintsOptions = nullptr);
 
     void logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates );
 
