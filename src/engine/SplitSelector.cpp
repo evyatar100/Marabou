@@ -32,7 +32,6 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _numOfConstraints( plConstraints.size() )
         , _constraint2index()
         , _constraint2OpenLogEntry()
-        , _log()
         , _generator()
         , _fout()
         , _csvPath()
@@ -122,7 +121,6 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
 
 
     _constraint2OpenLogEntry[constraintForSplitting] = logEntry;
-//    _log.push_back( logEntry );
 }
 
 void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates )
