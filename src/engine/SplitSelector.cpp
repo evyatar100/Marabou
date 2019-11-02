@@ -39,7 +39,7 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _fout()
         , _csvPath()
 {
-    _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) + getpid());
+    _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) );
 
     std::cout << "start SS constructor" << '\n';
     int i = 0;
