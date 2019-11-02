@@ -18,6 +18,9 @@
 #include <stdlib.h>
 
 #define COMMA_REPLACEMENT '.'
+#define IS_ACTIVE_HEADLINE_SUFFIX "_is_active"
+#define IS_VIOLATED_HEADLINE_SUFFIX "_is_violated"
+
 
 #define CSV_FILE_PATH "splitSelector_statistics/"
 
@@ -101,7 +104,7 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint( List<PiecewiseLinea
 //    return constraint;
 }
 
-void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates )
+void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates, List<PiecewiseLinearConstraint *> *plConstraintsOptions )
 {
     std::cout << "start SS logPLConstraintSplit" << '\n';
 
@@ -119,6 +122,14 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
         logEntry->isActive[i] = constraint->isActive();
     }
 
+    if ( plConstraintsOptions != nullptr )
+    {
+        for ( auto constraint: *plConstraintsOptions )
+        {
+            int i = _constraint2index[constraint];
+            logEntry->isViolated[i] = true;
+        }
+    }
 
     _constraint2OpenLogEntry[constraintForSplitting] = logEntry;
 }
@@ -147,7 +158,8 @@ void SplitSelector::writeHeadLine()
     for ( auto constraint: _plConstraints )
     {
         constraint2String( &constraintName, constraint );
-        _fout << ", " << constraintName;
+        _fout << ", " << constraintName << IS_ACTIVE_HEADLINE_SUFFIX;
+        _fout << ", " << constraintName << IS_VIOLATED_HEADLINE_SUFFIX;
     }
 
     _fout << "\n";
@@ -159,9 +171,9 @@ void SplitSelector::writeLogEntry( LogEntry *logEntry )
     std::string constraintName;
     constraint2String( &constraintName, logEntry->splittedConstraint );
     _fout << constraintName << ", " << size;
-    for ( auto x: logEntry->isActive )
+    for ( int i = 0; i < _numOfConstraints; ++i )
     {
-        _fout << ", " << x;
+        _fout << ", " << logEntry->isActive[i] << ", " << logEntry->isViolated[i];
     }
 
     _fout << "\n";

@@ -23,7 +23,7 @@ public:
 
     PiecewiseLinearConstraint *getNextConstraint(List<PiecewiseLinearConstraint *> *plConstraintsOptions = nullptr);
 
-    void logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates );
+    void logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates, List<PiecewiseLinearConstraint *> *plConstraintsOptions = nullptr );
 
     void logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates );
 
