@@ -35,7 +35,7 @@ SmtCore::SmtCore( IEngine *engine )
 SmtCore::~SmtCore()
 {
     freeMemory();
-    if (_splitSelector != nullptr)
+    if ( _splitSelector != nullptr )
     {
         delete _splitSelector;
         _splitSelector = nullptr;
@@ -53,7 +53,7 @@ void SmtCore::freeMemory()
     _stack.clear();
 }
 
-void SmtCore::setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints )
+void SmtCore::setPLConstrainsList( List<PiecewiseLinearConstraint *> plConstraints )
 {
     _splitSelector = new SplitSelector( plConstraints );
 }
@@ -85,7 +85,7 @@ bool SmtCore::needToSplit() const
     return _needToSplit;
 }
 
-void SmtCore::performSplit()
+void SmtCore::performSplit( List<PiecewiseLinearConstraint *> *plConstraintsOptions )
 {
     ASSERT( _needToSplit );
 
@@ -109,10 +109,10 @@ void SmtCore::performSplit()
         _statistics->incNumVisitedTreeStates();
     }
 
-    if (_splitSelector != nullptr)
+    if ( _splitSelector != nullptr )
     {
-        auto constraint =  _splitSelector->getNextConstraint();
-        if ( _constraintForSplitting)
+        auto constraint = _splitSelector->getNextConstraint(plConstraintsOptions);
+        if ( _constraintForSplitting )
         {
             _constraintForSplitting = constraint;
         }
@@ -123,7 +123,7 @@ void SmtCore::performSplit()
     // Before storing the state of the engine, we:
     //   1. Obtain the splits.
     //   2. Disable the constraint, so that it is marked as disbaled in the EngineState.
-    List<PiecewiseLinearCaseSplit> splits = _constraintForSplitting->getCaseSplits();
+    List <PiecewiseLinearCaseSplit> splits = _constraintForSplitting->getCaseSplits();
     ASSERT( !splits.empty() );
     ASSERT( splits.size() >= 2 ); // Not really necessary, can add code to handle this case.
     _constraintForSplitting->setActiveConstraint( false );
@@ -193,7 +193,7 @@ bool SmtCore::popSplit()
             throw MarabouError( MarabouError::DEBUGGING_ERROR );
         }
 
-        if (_splitSelector != nullptr)
+        if ( _splitSelector != nullptr )
         {
             _splitSelector->logPLConstraintUnsplit( _stack.back()->_activeConstraint, _statistics->getNumVisitedTreeStates() );
         }
@@ -216,7 +216,7 @@ bool SmtCore::popSplit()
 
     // Restore the state of the engine
     log( "\tRestoring engine state..." );
-    _engine->restoreState( *(stackEntry->_engineState) );
+    _engine->restoreState( *( stackEntry->_engineState ) );
     log( "\tRestoring engine state - DONE" );
 
     // Apply the new split and erase it from the list
@@ -260,7 +260,7 @@ void SmtCore::recordImpliedValidSplit( PiecewiseLinearCaseSplit &validSplit )
     checkSkewFromDebuggingSolution();
 }
 
-void SmtCore::allSplitsSoFar( List<PiecewiseLinearCaseSplit> &result ) const
+void SmtCore::allSplitsSoFar( List <PiecewiseLinearCaseSplit> &result ) const
 {
     result.clear();
 

@@ -65,7 +65,7 @@ public:
       Perform the split according to the constraint marked for
       splitting. Update bounds, add equations and update the stack.
     */
-    void performSplit();
+    void performSplit(List<PiecewiseLinearConstraint *> *plConstraintsOptions = nullptr);
 
 
     /*
