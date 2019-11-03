@@ -18,6 +18,7 @@
 #include <stdlib.h>
 
 #define COMMA_REPLACEMENT '.'
+#define IS_CHOSEN_HEADLINE_SUFFIX "_is_chosen"
 #define IS_ACTIVE_HEADLINE_SUFFIX "_is_active"
 #define IS_VIOLATED_HEADLINE_SUFFIX "_is_violated"
 
@@ -39,7 +40,9 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         , _fout()
         , _csvPath()
 {
-    _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) );
+    struct timeval tv;
+    gettimeofday( &tv, NULL );
+    _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) + tv.tv_usec);
 
     std::cout << "start SS constructor" << '\n';
     int i = 0;
@@ -161,11 +164,13 @@ void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constrain
 
 void SplitSelector::writeHeadLine()
 {
-    _fout << "current constraint" << ", " << "sub-tree size";
+//    _fout << "current constraint" << ", ";
+    _fout << "sub-tree_size";
     std::string constraintName;
     for ( auto constraint: _plConstraints )
     {
         constraint2String( &constraintName, constraint );
+        _fout << ", " << constraintName << IS_CHOSEN_HEADLINE_SUFFIX;
         _fout << ", " << constraintName << IS_ACTIVE_HEADLINE_SUFFIX;
         _fout << ", " << constraintName << IS_VIOLATED_HEADLINE_SUFFIX;
     }
@@ -175,12 +180,22 @@ void SplitSelector::writeHeadLine()
 
 void SplitSelector::writeLogEntry( LogEntry *logEntry )
 {
+    int j = _constraint2index[logEntry->splittedConstraint];
     int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
     std::string constraintName;
     constraint2String( &constraintName, logEntry->splittedConstraint );
-    _fout << constraintName << ", " << size;
+//    _fout << constraintName << ", ";
+    _fout << size;
     for ( int i = 0; i < _numOfConstraints; ++i )
     {
+        if (i == j)
+        {
+            _fout << ", " << 1;
+        }
+        else
+        {
+            _fout << ", " << 0;
+        }
         _fout << ", " << logEntry->isActive[i] << ", " << logEntry->isViolated[i];
     }
 
