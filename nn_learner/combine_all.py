@@ -12,15 +12,16 @@ if __name__ == '__main__':
 
     dfs = []
     os.chdir(sys.argv[1])
+
     for file in os.listdir('.'):
         if file.endswith(".csv"):
-            dfs.append(pd.read_csv(file, index_col=None, header=0))
+            dfs.append(pd.read_csv(file))
 
-    big_frame = pd.concat(dfs, ignore_index=True)
+    big_frame = pd.concat(dfs)
 
     if len(sys.argv) <= 2:
         name = default_name
     else:
         name = sys.argv[2]
 
-    big_frame.to_csv(name)
+    big_frame.to_csv(name, index=False)
