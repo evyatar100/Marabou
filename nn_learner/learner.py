@@ -17,18 +17,28 @@ class MyModel(Model):
     def __init__(self):
         super(MyModel, self).__init__()
 
-        self.n_layers = 20
+        self.n_layers = 10
         self.relu = Activation('relu')
-        self.dense = [Dense(500) for _ in range(self.n_layers)]
+        self.dense = [Dense(100) for _ in range(self.n_layers)]
 
+        self.dense_middle1 = Dense(1)
+        self.dense_middle2 = Dense(1)
         self.dense_final = Dense(1)
 
+        self.normalization = BatchNormalization()
+
     def call(self, x):
+        stops = {self.n_layers // 3 : self.dense_middle1, 2 * self.n_layers // 3: self.dense_middle2}
+        outputs = []
         for i in range(self.n_layers):
             x = self.dense[i](x)
             x = self.relu(x)
+            if i in stops.keys():
+                outputs.append(stops[i](x))
+                x = self.normalization(x)
         x = self.dense_final(x)
-        return x
+        outputs.append(x)
+        return outputs
 
 
 @tf.function
@@ -36,7 +46,11 @@ def train_step(model, samples, labels):
     with tf.GradientTape() as tape:
         predictions = model(samples)
 
-        loss = loss_object(labels, predictions)
+        loss = 0
+        for predictions_i in predictions:
+            loss += loss_object(labels, predictions_i)
+        loss /= len(predictions)
+
         gradients = tape.gradient(loss, model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, model.trainable_variables))
     train_loss(loss)
@@ -78,7 +92,7 @@ if __name__ == '__main__':
     labels = data[' sub-tree size'].values
 
     permutation = np.random.permutation(samples.shape[0])
-    samples = samples[permutation]
+    samples = samples[permutation].astype(np.float32)
     labels = labels[permutation]
 
     n_test = int(samples.shape[0] * 0.2)
@@ -98,12 +112,13 @@ if __name__ == '__main__':
     dataset_test = dataset_test.shuffle(n_test).batch(n_test)
 
     model = MyModel()
-    train(train_dataset, dataset_test, model, 30)
+    train(train_dataset, dataset_test, model, 10)
 
-    results = 2 ** model(samples_test)
-    results_df = pd.DataFrame({'real': labels_test, 'pred': results.numpy()[:, 0]})
-    results_df['diff'] = np.abs(results_df['real'] - results_df['pred'])
-    mu = np.mean(results_df['diff'])
-    sig = np.var(results_df['diff'])
-
-    print(mu)
+    results_df = pd.DataFrame({'real': labels_test})
+    results_lst = model(samples_test)
+    for i, results in enumerate(results_lst):
+        title_pred = f'pred{i}'
+        title_diff = f'diff{i}'
+        results_df[title_pred] = results.numpy()[:, 0]
+        results_df[title_diff] = np.abs(results_df['real'] - results_df[title_pred])
+        print(f'mu_{i} = {np.mean(results_df[title_diff])}')
