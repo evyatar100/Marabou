@@ -3,4 +3,4 @@ project(SocketTraining)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(SocketTraining main.cpp TensorFlowSocket.cpp TensorFlowSocket.h)
+add_executable(SocketTraining main.cpp ../src/engine/TensorFlowSocket.cpp ../src/engine/TensorFlowSocket.h)

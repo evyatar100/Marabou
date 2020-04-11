@@ -13,6 +13,8 @@
 #include <list>
 #include <vector>
 #include <string>
+#include <set>
+#include <sstream>
 
 #include "Debug.h"
 #include <stdlib.h>
@@ -32,17 +34,12 @@ std::string generateCSVPath();
 
 SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
         :
-        _plConstraints( plConstraints )
-        , _numOfConstraints( plConstraints.size() )
-        , _constraint2index()
-        , _constraint2OpenLogEntry()
-        , _generator()
-        , _fout()
-        , _csvPath()
+        _plConstraints( plConstraints.begin(), plConstraints.end() ), _numOfConstraints( plConstraints.size()), _constraint2index(),
+        _constraint2OpenLogEntry(), _generator(), _fout(), _csvPath(), _tensorFlowSocket()
 {
     struct timeval tv;
     gettimeofday( &tv, NULL );
-    _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) + tv.tv_usec);
+    _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) + tv.tv_usec );
 
     std::cout << "start SS constructor" << '\n';
     int i = 0;
@@ -71,46 +68,93 @@ PiecewiseLinearConstraint *SplitSelector::getNextConstraint( List<PiecewiseLinea
 {
     std::cout << "start SS getNextConstraint" << '\n';
 
-    std::vector < PiecewiseLinearConstraint * > activeConstraints;
-    if ( plConstraintsOptions == nullptr )
+    // create network_state string
+    std::stringstream network_state;
+    network_state << logEntry->isActive[0];
+    for ( int i = 1; i < _numOfConstraints; ++i )
     {
-        for ( auto constraint: _plConstraints )
-        {
-            if ( constraint->isActive() )
-            {
-                activeConstraints.push_back( constraint );
-            }
-        }
+        network_state << ',' << logEntry->isActive[i]
     }
-    else
+    for ( int i = 0; i < _numOfConstraints; ++i )
     {
-        for ( auto constraint: *plConstraintsOptions )
+        network_state << ',' << logEntry->isViolated[i]
+    }
+
+    // get the result
+    std::stringstream estimatorResultSS( _tensorFlowSocket.runModel((std::string) network_state ));
+    std::vector<int> estimatorResult;
+
+    // parse result
+    for ( int i; estimatorResultSS >> i; )
+    {
+        estimatorResult.push_back( i );
+        if ( estimatorResultSS.peek() == ',' )
+            estimatorResultSS.ignore();
+    }
+
+    // genereta a set of relevant constraints
+    std::set<int> relevantConstraint;
+    for ( auto constraint: *plConstraintsOptions )
+    {
+        if ( constraint->isActive())
         {
-            if ( constraint->isActive() )
-            {
-                activeConstraints.push_back( constraint );
-            }
+            relevantConstraint.insert( _constraint2index( constraint ));
         }
     }
 
-    std::cout << "activeConstraints.size() = " << activeConstraints.size() << " SS 2 getNextConstraint" << std::endl;
-    if ( activeConstraints.size() == 0 )
+    // return the best legal constraint
+    for (int constraintIndex: estimatorResult)
     {
-        return nullptr;
+        if (relevantConstraint.find(constraintIndex) != relevantConstraint.end())
+        {
+            return _plConstraints[constraintIndex];
+        }
     }
-    std::uniform_int_distribution<int> distribution( 0, activeConstraints.size() - 1 );
-    int i = distribution( _generator );
 
-    std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
-    return activeConstraints[i];
+    return nullptr;
+
+
+
+//    std::vector < PiecewiseLinearConstraint * > activeConstraints;
+//    if ( plConstraintsOptions == nullptr )
+//    {
+//        for ( auto constraint: _plConstraints )
+//        {
+//            if ( constraint->isActive())
+//            {
+//                activeConstraints.push_back( constraint );
+//            }
+//        }
+//    } else
+//    {
+//        for ( auto constraint: *plConstraintsOptions )
+//        {
+//            if ( constraint->isActive())
+//            {
+//                activeConstraints.push_back( constraint );
+//            }
+//        }
+//    }
+//
+//    std::cout << "activeConstraints.size() = " << activeConstraints.size() << " SS 2 getNextConstraint" << std::endl;
+//    if ( activeConstraints.size() == 0 )
+//    {
+//        return nullptr;
+//    }
+//    std::uniform_int_distribution<int> distribution( 0, activeConstraints.size() - 1 );
+//    int i = distribution( _generator );
+//
+//    std::cout << "i = " << i << " SS 3 getNextConstraint" << std::endl;
+//    return activeConstraints[i];
 
 }
 
-void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates, List<PiecewiseLinearConstraint *> *plConstraintsOptions )
+void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates,
+                                          List<PiecewiseLinearConstraint *> *plConstraintsOptions )
 {
     std::cout << "start SS logPLConstraintSplit" << '\n';
 
-    ASSERT( _constraint2OpenLogEntry.find( constraintForSplitting ) != _constraint2OpenLogEntry.end() );
+    ASSERT( _constraint2OpenLogEntry.find( constraintForSplitting ) != _constraint2OpenLogEntry.end());
     ASSERT( _constraint2OpenLogEntry[constraintForSplitting] == nullptr );
 
 
@@ -132,8 +176,7 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
             int i = _constraint2index[constraint];
             logEntry->isViolated[i] = true;
         }
-    }
-    else
+    } else
     {
         for ( auto constraint: _plConstraints )
         {
@@ -145,10 +188,11 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
     _constraint2OpenLogEntry[constraintForSplitting] = logEntry;
 }
 
-void SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates )
+void
+SplitSelector::logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates )
 {
     std::cout << "start SS logPLConstraintUnsplit" << '\n';
-    ASSERT( _constraint2OpenLogEntry.find( constraintForUnsplitting ) != _constraint2OpenLogEntry.end() );
+    ASSERT( _constraint2OpenLogEntry.find( constraintForUnsplitting ) != _constraint2OpenLogEntry.end());
 
     LogEntry *logEntry = _constraint2OpenLogEntry[constraintForUnsplitting];
     ASSERT( logEntry != nullptr );
@@ -170,9 +214,17 @@ void SplitSelector::writeHeadLine()
     for ( auto constraint: _plConstraints )
     {
         constraint2String( &constraintName, constraint );
-        _fout << ", " << constraintName << IS_CHOSEN_HEADLINE_SUFFIX;
-        _fout << ", " << constraintName << IS_ACTIVE_HEADLINE_SUFFIX;
-        _fout << ", " << constraintName << IS_VIOLATED_HEADLINE_SUFFIX;
+        _fout << "," << constraintName << IS_ACTIVE_HEADLINE_SUFFIX;
+    }
+    for ( auto constraint: _plConstraints )
+    {
+        constraint2String( &constraintName, constraint );
+        _fout << "," << constraintName << IS_VIOLATED_HEADLINE_SUFFIX;
+    }
+    for ( auto constraint: _plConstraints )
+    {
+        constraint2String( &constraintName, constraint );
+        _fout << "," << constraintName << IS_CHOSEN_HEADLINE_SUFFIX;
     }
 
     _fout << "\n";
@@ -188,15 +240,21 @@ void SplitSelector::writeLogEntry( LogEntry *logEntry )
     _fout << size;
     for ( int i = 0; i < _numOfConstraints; ++i )
     {
-        if (i == j)
+        _fout << "," << logEntry->isActive[i];
+    }
+    for ( int i = 0; i < _numOfConstraints; ++i )
+    {
+        _fout << "," << logEntry->isViolated[i];
+    }
+    for ( int i = 0; i < _numOfConstraints; ++i )
+    {
+        if ( i == j )
         {
-            _fout << ", " << 1;
-        }
-        else
+            _fout << "," << 1;
+        } else
         {
-            _fout << ", " << 0;
+            _fout << "," << 0;
         }
-        _fout << ", " << logEntry->isActive[i] << ", " << logEntry->isViolated[i];
     }
 
     _fout << "\n";
@@ -204,7 +262,7 @@ void SplitSelector::writeLogEntry( LogEntry *logEntry )
 
 void constraint2String( std::string *s, PiecewiseLinearConstraint *constraint )
 {
-    ReluConstraint *relu = ( ReluConstraint * ) constraint;
+    ReluConstraint *relu = (ReluConstraint *) constraint;
     *s = relu->serializeToString().ascii();
     std::replace( s->begin(), s->end(), ',', COMMA_REPLACEMENT ); // replace all ',' to COMMA_REPLACEMENT
 }

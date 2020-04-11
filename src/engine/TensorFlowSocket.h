@@ -11,7 +11,6 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <string.h>
 #include <string>
 
 using namespace std;
@@ -40,9 +39,12 @@ public:
 //    void initPythonServer();
 
 private:
+
     int sock;
     char buf[4096];
     int port = 43565;
+
+    bool isInitSucsses;
 };
 
 #endif //SOCKETTRANING_TENSORFLOWSOCKET_H

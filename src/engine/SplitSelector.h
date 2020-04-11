@@ -5,6 +5,7 @@
 #ifndef MARABOU_SPLITSELECTOR_H
 #define MARABOU_SPLITSELECTOR_H
 
+#include "TensorFlowSocket.h"
 #include "PiecewiseLinearConstraint.h"
 #include <map>
 #include <random>
@@ -53,7 +54,7 @@ private:
         int numVisitedTreeStatesAtUnsplit;
     };
 
-    List<PiecewiseLinearConstraint *> _plConstraints;
+    std::vector <PiecewiseLinearConstraint *> _plConstraints;
 
     int _numOfConstraints;
 
@@ -68,6 +69,8 @@ private:
     std::fstream _fout;
 
     std::string _csvPath;
+
+    TensorFlowSocket _tensorFlowSocket;
 
     void writeHeadLine();
     void writeLogEntry(LogEntry* logEntry);

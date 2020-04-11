@@ -30,6 +30,7 @@ SOURCES += \
 	Tableau.cpp \
 	TableauRow.cpp \
 	TableauState.cpp \
+	TensorFlowSocket.cpp \
 
 #
 # Local Variables:
