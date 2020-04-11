@@ -2,6 +2,7 @@
 // Created by evyatar on 05/04/2020.
 //
 
+#include <iostream>
 #include "TensorFlowSocket.h"
 
 TensorFlowSocket::TensorFlowSocket() {

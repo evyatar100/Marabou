@@ -9,7 +9,8 @@ from tree_size_estimator import TreeSizeEstimator
 HOST = ''  # specifies that the socket is reachable by any address the machine happens to have
 
 def parse_network_state(network_state_str):
-    network_state = np.array(network_state_str.split(',')).reshape(-1, 1)
+    network_state = np.array(network_state_str.split(',')).reshape(1, -1).astype(np.float32)
+    print('input parsed.')
     return network_state
 
 
@@ -29,10 +30,14 @@ def handleClient(connection, estimator):
 
         network_state = parse_network_state(data.decode())
         if estimator.check_input(network_state):
+            print('input is proper, waiting for estimation...')
             results = estimator.get_best_constraint(network_state)
-            connection.send(encode_results(results))
+            results_str = encode_results(results)
+            print('got result from model.')
+            connection.send(results_str)
+            print('result was sent to the client.')
         else:
-            connection.send(encode_results(b'error'))
+            connection.send(b'error')
 
     connection.close()
     os._exit(0)
@@ -62,14 +67,7 @@ def init_server(port):
 
         print("Connection from: ", address)
 
-        childPid = os.fork()
-        # copy this process
-        if childPid == 0:
-            # if in child process: handle
-            handleClient(connsocket, estimator)
-        else:
-            # close connection in parent
-            connsocket.close()
+        handleClient(connsocket, estimator)
 
     serversocket.close()
 
@@ -78,4 +76,5 @@ if __name__ == '__main__':
         print('usage: port_num')
         exit(1)
     port = int(sys.argv[1])
+    print(f'port = {port}')
     init_server(port)

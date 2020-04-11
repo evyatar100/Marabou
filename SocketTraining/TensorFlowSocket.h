@@ -42,7 +42,7 @@ public:
 private:
     int sock;
     char buf[4096];
-    int port = 43567;
+    int port = 43565;
 };
 
 #endif //SOCKETTRANING_TENSORFLOWSOCKET_H
