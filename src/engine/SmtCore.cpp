@@ -112,7 +112,7 @@ void SmtCore::performSplit( List<PiecewiseLinearConstraint *> *plConstraintsOpti
     if ( _splitSelector != nullptr )
     {
         auto constraint = _splitSelector->getNextConstraint(plConstraintsOptions);
-        if ( _constraintForSplitting )
+        if ( _constraintForSplitting and constraint)
         {
             _constraintForSplitting = constraint;
         }

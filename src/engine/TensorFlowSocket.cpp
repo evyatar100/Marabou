@@ -37,9 +37,9 @@ TensorFlowSocket::TensorFlowSocket()
 
 string TensorFlowSocket::runModel( string input )
 {
-    if (!isInitSucsses)
+    if ( !isInitSucsses )
     {
-        throw SocketExp("TensorFlowSocket initiation failed");
+        throw SocketExp( "TensorFlowSocket initiation failed" );
     }
     std::cout << "running model on the input: " << input << '\n';
 

@@ -1,0 +1,77 @@
+Network: resources/nnet/acasxu/ACASXU_experimental_v2a_2_7.nnet
+Number of layers: 8. Input layer size: 5. Output layer size: 5. Number of ReLUs: 300
+Total number of variables: 610
+Property: resources/properties/acas_property_3.txt
+
+Engine::processInputQuery: Input query (before preprocessing): 309 equations, 610 variables
+Engine::processInputQuery: Input query (after preprocessing): 609 equations, 838 variables
+
+Input bounds:
+        x0: [ -0.3035,  -0.2986]
+        x1: [ -0.0095,   0.0095]
+        x2: [  0.4934,   0.5000]
+        x3: [  0.3000,   0.5000]
+        x4: [  0.3000,   0.5000]
+
+
+
+Engine::solve: UNSAT query
+
+21:35:16 Statistics update:
+        --- Time Statistics ---
+        Total time elapsed: 1161004 milli (00:19:21)
+                Main loop: 1159886 milli (00:19:19)
+                Preprocessing time: 747 milli (00:00:00)
+                Unknown: 369 milli (00:00:00)
+        Breakdown for main loop:
+                [23.18%] Simplex steps: 268815 milli
+                [40.66%] Explicit-basis bound tightening: 471633 milli
+                [0.32%] Constraint-matrix bound tightening: 3700 milli
+                [0.15%] Degradation checking: 1735 milli
+                [0.02%] Precision restoration: 268 milli
+                [0.23%] Statistics handling: 2682 milli
+                [1.09%] Constraint-fixing steps: 12686 milli
+                [4.29%] Valid case splits: 49750 milli. Average per split: 1.53 milli
+                [0.05%] Applying stored bound-tightening: 533 milli
+                [25.21%] SMT core: 292413 milli
+                [3.30%] Symbolic Bound Tightening: 38271 milli
+                [1.50%] Unaccounted for: 17396 milli
+        --- Preprocessor Statistics ---
+        Number of preprocessor bound-tightening loop iterations: 8
+        Number of eliminated variables: 76
+        Number of constraints removed due to variable elimination: 76
+        Number of equations removed due to variable elimination: 0
+        --- Engine Statistics ---
+        Number of main loop iterations: 531916
+                501629 iterations were simplex steps. Total time: 268815 milli. Average: 0.54 milli.
+                28219 iterations were constraint-fixing steps. Total time: 12686 milli. Average: 0.45 milli
+        Number of active piecewise-linear constraints: 34 / 224
+                Constraints disabled by valid splits: 182. By SMT-originated splits: 8
+        Last reported degradation: 0.0000000000. Max degradation so far: 0.3069341576. Restorations so far: 1
+        Number of simplex pivots we attempted to skip because of instability: 370.
+        Unstable pivots performed anyway: 5
+        --- Tableau Statistics ---
+        Total number of pivots performed: 516250
+                Real pivots: 489353. Degenerate: 26897 (5.21%)
+                Degenerate pivots by request (e.g., to fix a PL constraint): 24887 (92.53%)
+                Average time per pivot: 0.20 milli
+        Total number of fake pivots performed: 5997
+        Total number of rows added: 5172. Number of merged columns: 0
+        Current tableau dimensions: M = 661, N = 1499
+        --- SMT Core Statistics ---
+        Total depth is 8. Total visited states: 3502. Number of splits: 1750. Number of pops: 1751
+        Max stack depth: 59
+        --- Bound Tightening Statistics ---
+        Number of tightened bounds: 739243.
+                Number of rows examined by row tightener: 491383. Consequent tightenings: 25873
+                Number of explicit basis matrices examined by row tightener: 7894. Consequent tightenings: 539877
+                Number of bound tightening rounds on the entire constraint matrix: 284. Consequent tightenings: 100908
+                Number of bound notifications sent to PL constraints: 622404. Tightenings proposed: 497104
+        --- Basis Factorization statistics ---
+        Number of basis refactorizations: 10250
+        --- Projected Steepest Edge Statistics ---
+        Number of iterations: 497745.
+        Number of resets to reference space: 6986. Avg. iterations per reset: 71
+        --- SBT ---
+        Number of tightened bounds: 179527
+UNSAT

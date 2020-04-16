@@ -14,6 +14,9 @@
 #include <list>
 #include <fstream>
 
+enum SelectorMode {RANDOM, NN, NONE};
+const SelectorMode DEFAULT_SELECTOR_MODE = NONE;
+
 class SplitSelector
 {
 public:
@@ -27,6 +30,8 @@ public:
     void logPLConstraintSplit( PiecewiseLinearConstraint *constraintForSplitting, int numVisitedTreeStates, List<PiecewiseLinearConstraint *> *plConstraintsOptions = nullptr );
 
     void logPLConstraintUnsplit( PiecewiseLinearConstraint *constraintForUnsplitting, int numVisitedTreeStates );
+
+    void setSelectorMode(SelectorMode mode);
 
 private:
 
@@ -54,6 +59,11 @@ private:
         int numVisitedTreeStatesAtUnsplit;
     };
 
+    PiecewiseLinearConstraint *getConstraintFromNN(List<PiecewiseLinearConstraint *> *plConstraintsOptions = nullptr);
+    PiecewiseLinearConstraint *getRandomConstraint(List<PiecewiseLinearConstraint *> *plConstraintsOptions = nullptr);
+
+
+
     std::vector <PiecewiseLinearConstraint *> _plConstraints;
 
     int _numOfConstraints;
@@ -74,6 +84,8 @@ private:
 
     void writeHeadLine();
     void writeLogEntry(LogEntry* logEntry);
+
+    SelectorMode _selectorMode;
 };
 
 
