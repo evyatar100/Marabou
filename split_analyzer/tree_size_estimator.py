@@ -91,7 +91,7 @@ class TreeSizeEstimator:
     def train(self, train_ds, test_ds, epochs):
         iterations_c = 0
         for epoch in range(epochs):
-            for test_images, test_labels in test_ds:
+            for test_images, test_labels in test_ds: #change name
                 self.test_step(test_images, test_labels)
 
             for samples, labels in train_ds:
@@ -112,19 +112,22 @@ class TreeSizeEstimator:
     def get_data_formated(csv_path):
         data = pd.read_csv(csv_path)
 
-        samples = data.drop(columns=['Unnamed: 0', ' sub-tree size']).values
+        samples = data.drop(columns=[' sub-tree size']).values
         labels = data[' sub-tree size'].values
 
         permutation = np.random.permutation(samples.shape[0])
         samples = samples[permutation].astype(np.float32)
         labels = labels[permutation]
+
         n_test = int(samples.shape[0] * 0.2)
         samples_train = samples[n_test:]
         labels_train = labels[n_test:]
         samples_test = samples[:n_test]
         labels_test = labels[:n_test]
+
         labels_train_log = np.log2(labels_train)
         labels_test_log = np.log2(labels_test)
+
         dataset_train_one = tf.data.Dataset.from_tensor_slices((samples_train, labels_train_log))
         dataset_test_one = tf.data.Dataset.from_tensor_slices((samples_test, labels_test_log))
         train_dataset = dataset_train_one.shuffle(len(samples[n_test:])).batch(500)
@@ -164,6 +167,7 @@ class TreeSizeEstimator:
         output = np.array(self.model(input_tensor))[-1, :, 0]
         argsort = np.argsort(output)
         return argsort
+
 
     input_example = np.array([[0., 0., 1., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0.,
                                1., 1., 1., 1., 0., 0., 0., 0., 0., 0., 1., 1., 0., 0., 0., 0.,
