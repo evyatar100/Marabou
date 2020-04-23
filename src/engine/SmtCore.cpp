@@ -29,6 +29,7 @@ SmtCore::SmtCore( IEngine *engine )
     , _engine( engine )
     , _needToSplit( false )
     , _constraintForSplitting( NULL )
+    , _splitSelector( nullptr )
     , _stateId( 0 )
     , _constraintViolationThreshold
       ( GlobalConfiguration::CONSTRAINT_VIOLATION_THRESHOLD )
@@ -42,6 +43,12 @@ SmtCore::~SmtCore()
 
 void SmtCore::freeMemory()
 {
+    if ( _splitSelector != nullptr )
+    {
+        delete _splitSelector;
+        _splitSelector = nullptr;
+    }
+
     for ( const auto &stackEntry : _stack )
     {
         delete stackEntry->_engineState;
@@ -82,9 +89,11 @@ bool SmtCore::needToSplit() const
     return _needToSplit;
 }
 
-void SmtCore::performSplit()
+void SmtCore::performSplit( List<PiecewiseLinearConstraint *> *plViolatedConstraints )
 {
     ASSERT( _needToSplit );
+
+    ASSERTM( !(_splitSelector != nullptr && plViolatedConstraints == nullptr), "If we are using the splitSelector, The engine must provide the violated constrains to performSplit" )
 
     // Maybe the constraint has already become inactive - if so, ignore
     if ( !_constraintForSplitting->isActive() )
@@ -106,6 +115,16 @@ void SmtCore::performSplit()
         _statistics->incNumVisitedTreeStates();
     }
 
+    if ( _splitSelector != nullptr )
+    {
+        auto constraint = _splitSelector->getNextConstraint( plViolatedConstraints );
+        if ( _constraintForSplitting and constraint) // TODO why _constraintForSplitting in if?
+        {
+            _constraintForSplitting = constraint;
+        }
+        _splitSelector->logPLConstraintSplit( _constraintForSplitting, _statistics->getNumVisitedTreeStates(), plViolatedConstraints );
+    }
+
     // Before storing the state of the engine, we:
     //   1. Obtain the splits.
     //   2. Disable the constraint, so that it is marked as disbaled in the EngineState.
@@ -121,6 +140,7 @@ void SmtCore::performSplit()
     _engine->storeState( *stateBeforeSplits, true );
 
     StackEntry *stackEntry = new StackEntry;
+    stackEntry->_activeConstraint = _constraintForSplitting;
     // Perform the first split: add bounds and equations
     List<PiecewiseLinearCaseSplit>::iterator split = splits.begin();
     _engine->applySplit( *split );
@@ -175,6 +195,11 @@ bool SmtCore::popSplit()
             // Pops should not occur from a compliant stack!
             printf( "Error! Popping from a compliant stack\n" );
             throw MarabouError( MarabouError::DEBUGGING_ERROR );
+        }
+
+        if ( _splitSelector != nullptr )
+        {
+            _splitSelector->logPLConstraintUnsplit( _stack.back()->_activeConstraint, _statistics->getNumVisitedTreeStates() );
         }
 
         delete _stack.back()->_engineState;
@@ -408,6 +433,11 @@ void SmtCore::pickSplitPLConstraint()
     {
         _constraintForSplitting = _engine->pickSplitPLConstraint();
     }
+}
+
+void SmtCore::setPLConstrainsList( List<PiecewiseLinearConstraint *> plConstraints )
+{
+    _splitSelector = new SplitSelector( plConstraints );
 }
 
 //

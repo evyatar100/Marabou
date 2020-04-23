@@ -192,7 +192,7 @@ bool Engine::solve( unsigned timeoutInSeconds )
             // Perform any SmtCore-initiated case splits
             if ( _smtCore.needToSplit() )
             {
-                _smtCore.performSplit();
+                _smtCore.performSplit( &_violatedPlConstraints );
                 splitJustPerformed = true;
                 continue;
             }
@@ -1027,6 +1027,7 @@ void Engine::initializeTableau( const double *constraintMatrix, const List<unsig
         plConstraint->registerConstraintBoundTightener( _constraintBoundTightener );
 
     _plConstraints = _preprocessedQuery.getPiecewiseLinearConstraints();
+    _smtCore.setPLConstrainsList( _plConstraints );
     for ( const auto &constraint : _plConstraints )
     {
         constraint->registerAsWatcher( _tableau );

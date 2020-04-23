@@ -20,6 +20,7 @@
 #include "PiecewiseLinearConstraint.h"
 #include "Stack.h"
 #include "Statistics.h"
+#include "SplitSelector.h"
 
 class EngineState;
 class IEngine;
@@ -35,6 +36,10 @@ public:
       Clear the stack.
     */
     void freeMemory();
+
+
+    void setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints );
+
 
     /*
       Inform the SMT core that a PL constraint is violated.
@@ -61,7 +66,7 @@ public:
       Perform the split according to the constraint marked for
       splitting. Update bounds, add equations and update the stack.
     */
-    void performSplit();
+    void performSplit( List<PiecewiseLinearConstraint *> *plViolatedConstraints = nullptr);
 
     /*
       Pop an old split from the stack, and perform a new split as
@@ -120,6 +125,7 @@ private:
     {
     public:
         PiecewiseLinearCaseSplit _activeSplit;
+        PiecewiseLinearConstraint *_activeConstraint;
         List<PiecewiseLinearCaseSplit> _impliedValidSplits;
         List<PiecewiseLinearCaseSplit> _alternativeSplits;
         EngineState *_engineState;
@@ -150,6 +156,11 @@ private:
     */
     bool _needToSplit;
     PiecewiseLinearConstraint *_constraintForSplitting;
+
+    /*
+    * chooses the next PL constraint to split
+    */
+    SplitSelector *_splitSelector;
 
     /*
       Count how many times each constraint has been violated.
