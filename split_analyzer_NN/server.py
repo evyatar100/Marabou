@@ -1,6 +1,8 @@
 import os
 import socket
 import sys
+import threading
+
 
 import numpy as np
 
@@ -19,28 +21,30 @@ def encode_results(estimator_result):
     return estimator_result_str
 
 
-def handleClient(connection, estimator):
+def handleClient(connection, estimator, thread_name):
+
+    prefix = thread_name + ':'
+
     # Read data
     while True:
         data = connection.recv(4096)
         if not data:
             break
 
-        print("from connected user: ", data.decode())  # convert from byte to string
+        print(prefix, 'from connected user: ', data.decode())  # convert from byte to string
 
         network_state = parse_network_state(data.decode())
         if estimator.check_input(network_state):
-            print('input is proper, waiting for estimation...')
+            print(prefix, 'input is proper, waiting for estimation...')
             results = estimator.get_best_constraint(network_state)
             results_str = encode_results(results)
-            print('got result from model.')
+            print(prefix, 'got result from model.')
             connection.send(results_str)
-            print('result was sent to the client.')
+            print(prefix, 'result was sent to the client.')
         else:
             connection.send(b'error')
 
     connection.close()
-    os._exit(0)
 
 
 def init_server(port):
@@ -61,13 +65,18 @@ def init_server(port):
 
     print("Server Listening...")
 
+    i = 1
     while True:
         # accept connections from outside
         (connsocket, address) = serversocket.accept()
-
         print("Connection from: ", address)
 
-        handleClient(connsocket, estimator)
+        thread_name = f'thread {i}'
+        thread = threading.Thread(target=handleClient, args=(connsocket, estimator, thread_name))
+        thread.start()
+
+        # handleClient(connsocket, estimator)
+        i += 1
 
     serversocket.close()
 
