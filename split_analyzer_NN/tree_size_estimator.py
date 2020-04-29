@@ -11,6 +11,8 @@ from tensorflow.keras.layers import Dense, Activation, BatchNormalization
 
 N_CONSTRAINS = 224
 
+N_FEATURES_PER_CONSTRAINS = 9
+
 
 class MyModel(Model):
 
@@ -112,8 +114,8 @@ class TreeSizeEstimator:
     def get_data_formated(csv_path):
         data = pd.read_csv(csv_path)
 
-        samples = data.drop(columns=[' sub-tree size']).values
-        labels = data[' sub-tree size'].values
+        samples = data.drop(columns=['sub-tree_size']).values
+        labels = data['sub-tree_size'].values
 
         permutation = np.random.permutation(samples.shape[0])
         samples = samples[permutation].astype(np.float32)
@@ -141,59 +143,29 @@ class TreeSizeEstimator:
         self.checkpoint.restore(tf.train.latest_checkpoint(self.checkpoint_dir))
 
         self.train(train_dataset, train_dataset_test, epochs=10)
-        #
-        # results_df = pd.DataFrame({'real': labels_test})
-        # results_lst = self.model(samples_test)
-        # for i, results in enumerate(results_lst):
-        #     title_pred = f'pred{i}'
-        #     title_diff = f'diff{i}'
-        #     results_df[title_pred] = results.numpy()[:, 0]
-        #     results_df[title_diff] = np.abs(results_df['real'] - results_df[title_pred])
-        #     print(f'mu_{i} = {np.mean(results_df[title_diff])}')
+
+        results_df = pd.DataFrame({'real': labels_test})
+        results_lst = self.model(samples_test)
+        for i, results in enumerate(results_lst):
+            title_pred = f'pred{i}'
+            title_diff = f'diff{i}'
+            results_df[title_pred] = results.numpy()[:, 0]
+            results_df[title_diff] = np.abs(results_df['real'] - results_df[title_pred])
+            print(f'mu_{i} = {np.mean(results_df[title_diff])}')
 
     def restore_model(self):
         self.checkpoint.restore(tf.train.latest_checkpoint(self.checkpoint_dir))
 
     def check_input(self, network_state):
-        return network_state.shape == (1, N_CONSTRAINS * 2)
+        return network_state.shape == (1, N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS)
 
     def get_best_constraint(self, network_state):
-        assert network_state.shape == (1, N_CONSTRAINS * 2)
+        assert self.check_input(network_state)
 
-        input_tensor = np.zeros((N_CONSTRAINS, N_CONSTRAINS * 3), dtype=np.float32)
-        input_tensor[:, :N_CONSTRAINS * 2] = network_state
-        input_tensor[:, N_CONSTRAINS * 2:] = np.eye(N_CONSTRAINS)
+        input_tensor = np.zeros((N_CONSTRAINS, N_CONSTRAINS * (N_FEATURES_PER_CONSTRAINS + 1)), dtype=np.float32)
+        input_tensor[:, :N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS] = network_state
+        input_tensor[:, N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS:] = np.eye(N_CONSTRAINS)
 
         output = np.array(self.model(input_tensor))[-1, :, 0]
         argsort = np.argsort(output)
         return argsort
-
-
-    input_example = np.array([[0., 0., 1., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 0.,
-                               1., 1., 1., 1., 0., 0., 0., 0., 0., 0., 1., 1., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 1., 1., 0., 0., 1., 1., 0., 0.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 1., 1.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               1., 0., 1., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               1., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 1., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.,
-                               1., 0., 1., 0., 1., 0., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0.,
-                               0., 0., 1., 1., 1., 1., 0., 0., 1., 0., 1., 1., 0., 0., 0., 0.,
-                               1., 0., 0., 0., 0., 0., 1., 1., 0., 0., 0., 0., 0., 0., 1., 0.,
-                               0., 0., 1., 0., 1., 1., 0., 0., 1., 0., 0., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 0., 0., 0., 0., 1., 1., 0., 0., 0., 0., 1., 0.,
-                               0., 0., 0., 0., 0., 0., 1., 0., 1., 0., 1., 0., 0., 0., 0., 0.,
-                               0., 0., 0., 0., 1., 0., 0., 0., 0., 0., 1., 0., 1., 0., 1., 1.,
-                               1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0.,
-                               1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0.,
-                               1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0.,
-                               1., 0., 1., 0., 1., 0., 0., 0., 1., 0., 1., 0., 1., 0., 1., 0.,
-                               1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0.,
-                               1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0., 1., 0.]])

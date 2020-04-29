@@ -23,6 +23,7 @@
 #include "MarabouError.h"
 #include "ReluConstraint.h"
 #include "SmtCore.h"
+#include "AutoTableau.h"
 
 SmtCore::SmtCore( IEngine *engine )
     : _statistics( NULL )
@@ -435,9 +436,9 @@ void SmtCore::pickSplitPLConstraint()
     }
 }
 
-void SmtCore::setPLConstrainsList( List<PiecewiseLinearConstraint *> plConstraints )
+void SmtCore::setSplitSelectorArgs( List<PiecewiseLinearConstraint *> plConstraints, AutoTableau &tableau )
 {
-    _splitSelector = new SplitSelector( plConstraints );
+    _splitSelector = new SplitSelector( plConstraints, tableau );
 }
 
 //

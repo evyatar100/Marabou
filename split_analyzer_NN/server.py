@@ -8,11 +8,12 @@ import numpy as np
 
 from tree_size_estimator import TreeSizeEstimator
 
+BUF_SIZE = 32768
+
 HOST = ''  # specifies that the socket is reachable by any address the machine happens to have
 
 def parse_network_state(network_state_str):
     network_state = np.array(network_state_str.split(',')).reshape(1, -1).astype(np.float32)
-    print('input parsed.')
     return network_state
 
 
@@ -27,7 +28,7 @@ def handleClient(connection, estimator, thread_name):
 
     # Read data
     while True:
-        data = connection.recv(4096)
+        data = connection.recv(BUF_SIZE)
         if not data:
             break
 

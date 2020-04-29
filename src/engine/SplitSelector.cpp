@@ -18,12 +18,20 @@
 #include <sstream>
 
 #include "Debug.h"
-#include <stdlib.h>
+#include "AutoTableau.h"
 
 #define COMMA_REPLACEMENT '.'
 #define IS_CHOSEN_HEADLINE_SUFFIX "_is_chosen"
 #define IS_ACTIVE_HEADLINE_SUFFIX "_is_active"
 #define IS_VIOLATED_HEADLINE_SUFFIX "_is_violated"
+#define PHASE_STATUS_HEADLINE_SUFFIX "_phase_status"
+
+#define B_VAL_SUFFIX "_B_val"
+#define B_LOWER_SUFFIX "_B_lower"
+#define B_UPPER_SUFFIX "_B_upper"
+#define F_VAL_SUFFIX "_F_val"
+#define F_LOWER_SUFFIX "_F_lower"
+#define F_UPPER_SUFFIX "_F_upper"
 
 
 #define CSV_FILE_PATH "splitSelector_statistics/"
@@ -32,18 +40,21 @@ void constraint2String( std::string *s, PiecewiseLinearConstraint *constraint );
 
 std::string generateCSVPath();
 
+SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints, AutoTableau &tableau ):
 
-SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
-        :
-        _plConstraints( plConstraints.begin(), plConstraints.end()), _numOfConstraints( plConstraints.size()), _constraint2index(),
+        _plConstraints( plConstraints.begin(), plConstraints.end()), _tableau( tableau ), _numOfConstraints( plConstraints.size()), _constraint2index(),
         _constraint2OpenLogEntry(), _generator(), _fout(), _csvPath(), _tensorFlowSocket(), _selectorMode( DEFAULT_SELECTOR_MODE )
 {
-    ASSERTM(_tensorFlowSocket.isSocketReady(), "Error: Socket is not ready. maybe the server is not running.")
+    std::cout << "start SS constructor" << '\n';
+
+    if (!_tensorFlowSocket.isSocketReady())
+    {
+        std::cout << "warning: Socket is not ready. maybe the server is not running." << '\n';
+    }
     struct timeval tv;
     gettimeofday( &tv, NULL );
     _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) + tv.tv_usec );
 
-    std::cout << "start SS constructor" << '\n';
     int i = 0;
     for ( auto constraint: _plConstraints )
     {
@@ -58,6 +69,8 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints )
     _fout.close();
     _fout.open( _csvPath, std::ios::out | std::ios::app );
     writeHeadLine();
+    _fout.close();
+    _fout.open( _csvPath, std::ios::out | std::ios::app );
 }
 
 SplitSelector::~SplitSelector()
@@ -69,27 +82,13 @@ SplitSelector::~SplitSelector()
 
 PiecewiseLinearConstraint *SplitSelector::getConstraintFromNN( List<PiecewiseLinearConstraint *> *plViolatedConstraints )
 {
-
+    ASSERTM(_tensorFlowSocket.isSocketReady(), "Error: Socket is not ready. maybe the server is not running.")
     ASSERT( plViolatedConstraints != nullptr );
-    std::unordered_set<PiecewiseLinearConstraint *> plViolatedConstraintsSet( plViolatedConstraints->begin(), plViolatedConstraints->end());
-    bool isViolated;
-
-    // create network_state string
-    std::stringstream network_state;
-    network_state << _plConstraints[0]->isActive();
-    for ( int i = 1; i < _numOfConstraints; ++i )
-    {
-        network_state << ',' << _plConstraints[i]->isActive();
-    }
-    for ( int i = 0; i < _numOfConstraints; ++i )
-    {
-        isViolated = plViolatedConstraintsSet.find( _plConstraints[i] ) != plViolatedConstraintsSet.end();
-        network_state << ',' << isViolated;
-    }
+    string networkStateStr = getNetworkStateStr( plViolatedConstraints );
 
     // get the result
     std::cout << "getting the results from the server..." << '\n';
-    std::stringstream estimatorResultSS( _tensorFlowSocket.runModel( network_state.str()));
+    std::stringstream estimatorResultSS( _tensorFlowSocket.runModel( networkStateStr ));
     std::cout << "got the results!" << '\n';
 
     std::vector<int> estimatorResult;
@@ -122,6 +121,41 @@ PiecewiseLinearConstraint *SplitSelector::getConstraintFromNN( List<PiecewiseLin
     }
 
     return nullptr;
+}
+
+string SplitSelector::getNetworkStateStr( List<PiecewiseLinearConstraint *> *plViolatedConstraints) const
+{
+    unordered_set<PiecewiseLinearConstraint *> plViolatedConstraintsSet( plViolatedConstraints->begin(), plViolatedConstraints->end());
+    bool isViolated;
+    ReluConstraint* reluConstraintPtr;
+    unsigned b, f;
+
+    // create network_state string
+    stringstream network_state;
+    network_state << _plConstraints[0]->isActive();
+    for ( auto constraint: _plConstraints )
+    {
+        network_state << ',' << constraint->isActive();
+
+        isViolated = plViolatedConstraintsSet.find( constraint ) != plViolatedConstraintsSet.end();
+        network_state << ',' << isViolated;
+
+        reluConstraintPtr = dynamic_cast<ReluConstraint *>( constraint );
+        network_state << ',' << reluConstraintPtr->getPhaseStatus();
+
+        b = reluConstraintPtr->getB();
+        network_state << ',' << _tableau->getValue(b);
+        network_state << ',' << _tableau->getLowerBound(b);
+        network_state << ',' << _tableau->getUpperBound(b);
+
+        f = reluConstraintPtr->getB();
+        network_state << ',' << _tableau->getValue(f);
+        network_state << ',' << _tableau->getLowerBound(f);
+        network_state << ',' << _tableau->getUpperBound(f);
+    }
+
+    // length ~~ 13001
+    return network_state.str();;
 }
 
 PiecewiseLinearConstraint *SplitSelector::getRandomConstraint( List<PiecewiseLinearConstraint *> *plViolatedConstraints )
@@ -186,32 +220,11 @@ void SplitSelector::logPLConstraintSplit( PiecewiseLinearConstraint *constraintF
     ASSERT( _constraint2OpenLogEntry[constraintForSplitting] == nullptr );
 
 
-    LogEntry *logEntry = new LogEntry( _numOfConstraints );
+    LogEntry *logEntry = new LogEntry();
     logEntry->splittedConstraint = constraintForSplitting;
     logEntry->numVisitedTreeStatesAtSplit = numVisitedTreeStates;
 
-    for ( auto constraint: _plConstraints )
-    {
-        int i = _constraint2index[constraint];
-        logEntry->isActive[i] = constraint->isActive();
-
-    }
-
-    if ( plConstraintsOptions != nullptr )
-    {
-        for ( auto constraint: *plConstraintsOptions )
-        {
-            int i = _constraint2index[constraint];
-            logEntry->isViolated[i] = true;
-        }
-    } else
-    {
-        for ( auto constraint: _plConstraints )
-        {
-            int i = _constraint2index[constraint];
-            logEntry->isViolated[i] = -1;
-        }
-    }
+    logEntry->networkState = getNetworkStateStr( plConstraintsOptions );
 
     _constraint2OpenLogEntry[constraintForSplitting] = logEntry;
 }
@@ -241,12 +254,17 @@ void SplitSelector::writeHeadLine()
     {
         constraint2String( &constraintName, constraint );
         _fout << "," << constraintName << IS_ACTIVE_HEADLINE_SUFFIX;
-    }
-    for ( auto constraint: _plConstraints )
-    {
-        constraint2String( &constraintName, constraint );
         _fout << "," << constraintName << IS_VIOLATED_HEADLINE_SUFFIX;
+        _fout << "," << constraintName << PHASE_STATUS_HEADLINE_SUFFIX;
+
+        _fout << "," << constraintName << B_VAL_SUFFIX;
+        _fout << "," << constraintName << B_LOWER_SUFFIX;
+        _fout << "," << constraintName << B_UPPER_SUFFIX;
+        _fout << "," << constraintName << F_VAL_SUFFIX;
+        _fout << "," << constraintName << F_LOWER_SUFFIX;
+        _fout << "," << constraintName << F_UPPER_SUFFIX;
     }
+
     for ( auto constraint: _plConstraints )
     {
         constraint2String( &constraintName, constraint );
@@ -260,18 +278,10 @@ void SplitSelector::writeLogEntry( LogEntry *logEntry )
 {
     int j = _constraint2index[logEntry->splittedConstraint];
     int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
-    std::string constraintName;
-    constraint2String( &constraintName, logEntry->splittedConstraint );
-//    _fout << constraintName << ", ";
+
     _fout << size;
-    for ( int i = 0; i < _numOfConstraints; ++i )
-    {
-        _fout << "," << logEntry->isActive[i];
-    }
-    for ( int i = 0; i < _numOfConstraints; ++i )
-    {
-        _fout << "," << logEntry->isViolated[i];
-    }
+    _fout << logEntry->networkState;
+
     for ( int i = 0; i < _numOfConstraints; ++i )
     {
         if ( i == j )
@@ -314,7 +324,7 @@ std::string generateCSVPath()
     path.append( buf );
     path.append( ".csv" );
 
-    std::cout << '\n' << path << '\n';
+    std::cout << '\n' << "csv path = "<< path << '\n';
 
     return path;
 }

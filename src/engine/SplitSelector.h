@@ -7,6 +7,8 @@
 
 #include "TensorFlowSocket.h"
 #include "PiecewiseLinearConstraint.h"
+#include "AutoTableau.h"
+
 #include <map>
 #include <random>
 #include <vector>
@@ -15,13 +17,12 @@
 #include <fstream>
 
 enum SelectorMode {RANDOM, NN, NONE};
-const SelectorMode DEFAULT_SELECTOR_MODE = NN;
+const SelectorMode DEFAULT_SELECTOR_MODE = RANDOM;
 
 class SplitSelector
 {
 public:
-    SplitSelector(
-            List<PiecewiseLinearConstraint *> plConstraints );
+    SplitSelector( List<PiecewiseLinearConstraint *> plConstraints, AutoTableau &tableau );
 
     ~SplitSelector();
 
@@ -33,27 +34,19 @@ public:
 
     void setSelectorMode(SelectorMode mode);
 
+
 private:
 
     struct LogEntry
     {
 
-        LogEntry( int numOfConstraints )
-                : isViolated( numOfConstraints )
-                , isActive( numOfConstraints )
-                , splittedConstraint( nullptr )
+        LogEntry()
+                : splittedConstraint( nullptr )
                 , numVisitedTreeStatesAtSplit( -1 )
                 , numVisitedTreeStatesAtUnsplit( -1 )
-        {
-            for ( int i = 0; i < numOfConstraints; ++i )
-            {
-                isActive[i] = false;
-                isViolated[i] = false;
-            }
-        }
+        {}
 
-        std::vector<bool> isViolated;
-        std::vector<bool> isActive;
+        std::string networkState;
         PiecewiseLinearConstraint* splittedConstraint;
         int numVisitedTreeStatesAtSplit;
         int numVisitedTreeStatesAtUnsplit;
@@ -66,13 +59,13 @@ private:
 
     std::vector <PiecewiseLinearConstraint *> _plConstraints;
 
+    AutoTableau &_tableau;
+
     int _numOfConstraints;
 
     std::map<PiecewiseLinearConstraint *, int> _constraint2index;
 
     std::map<PiecewiseLinearConstraint *, LogEntry *> _constraint2OpenLogEntry;
-
-//    std::list<LogEntry *> _log;
 
     std::default_random_engine _generator;
 
@@ -82,10 +75,13 @@ private:
 
     TensorFlowSocket _tensorFlowSocket;
 
+    SelectorMode _selectorMode;
+
+
     void writeHeadLine();
     void writeLogEntry(LogEntry* logEntry);
+    string getNetworkStateStr( List<PiecewiseLinearConstraint *> *plViolatedConstraints ) const;
 
-    SelectorMode _selectorMode;
 };
 
 

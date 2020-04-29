@@ -38,7 +38,7 @@ public:
     void freeMemory();
 
 
-    void setPLConstrainsList(List<PiecewiseLinearConstraint *> plConstraints );
+    void setSplitSelectorArgs( List<PiecewiseLinearConstraint *> plConstraints, AutoTableau &tableau );
 
 
     /*

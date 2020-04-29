@@ -1027,7 +1027,7 @@ void Engine::initializeTableau( const double *constraintMatrix, const List<unsig
         plConstraint->registerConstraintBoundTightener( _constraintBoundTightener );
 
     _plConstraints = _preprocessedQuery.getPiecewiseLinearConstraints();
-    _smtCore.setPLConstrainsList( _plConstraints );
+    _smtCore.setSplitSelectorArgs( _plConstraints, _tableau );
     for ( const auto &constraint : _plConstraints )
     {
         constraint->registerAsWatcher( _tableau );

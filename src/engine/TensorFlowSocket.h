@@ -13,8 +13,10 @@
 #include <arpa/inet.h>
 #include <string>
 
-using namespace std;
+#define BUF_SIZE 32768 // we usually need around 13000 chars
+#define DEFAULT_PORT 43001
 
+using namespace std;
 
 class SocketExp: public exception
 {
@@ -44,8 +46,8 @@ public:
 private:
 
     int sock;
-    char buf[4096];
-    int port = 43001;
+    char buf[BUF_SIZE];
+    int port = DEFAULT_PORT;
 
     bool isInitSucsses;
 };

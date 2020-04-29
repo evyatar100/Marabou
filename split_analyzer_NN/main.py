@@ -12,10 +12,10 @@ if __name__ == '__main__':
     tree_estimator.restore_model()
     #
     data = pd.read_csv(csv_path)
-    samples = data.drop(columns=[' sub-tree size']).values
+    samples = data.drop(columns=['sub-tree_size']).values
 
     N_CONSTRAINS = 224
-    network_state = samples[0, :N_CONSTRAINS * 2].reshape(1, N_CONSTRAINS * 2)
+    network_state = samples[0, :N_CONSTRAINS * 9].reshape(1, -1)
     #
     # network_state1 = network_state[0]
     # network_state_str = ''
