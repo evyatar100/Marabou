@@ -34,7 +34,7 @@
 #define F_UPPER_SUFFIX "_F_upper"
 
 
-#define CSV_FILE_PATH "splitSelector_statistics/"
+#define CSV_FILE_PATH "/cs/labs/guykatz/evyatar100/Marabou/splitSelector_statistics/"
 
 void constraint2String( std::string *s, PiecewiseLinearConstraint *constraint );
 
