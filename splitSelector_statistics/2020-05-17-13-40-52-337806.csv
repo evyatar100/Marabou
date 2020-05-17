@@ -1,1 +1,0 @@
-sub-tree_size,relu.2.1_is_active,relu.2.1_is_violated,relu.2.1_phase_status,relu.2.1_B_val,relu.2.1_B_lower,relu.2.1_B_upper,relu.2.1_F_val,relu.2.1_F_lower,relu.2.1_F_upper,relu.4.2_is_active,relu.4.2_is_violated,relu.4.2_phase_status,relu.4.2_B_val,relu.4.2_B_lower,relu.4.2_B_upper,relu.4.2_F_val,relu.4.2_F_lower,relu.4.2_F_upper,relu.2.1_is_chosen,relu.4.2_is_chosen

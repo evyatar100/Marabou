@@ -18,12 +18,29 @@ if __name__ == '__main__':
     else:
         name = sys.argv[2]
 
-    os.remove(name)
+    if os.path.exists(name):
+        os.remove(name)
 
+    n_cols = None
     for file in os.listdir('.'):
         if file.endswith(".csv"):
-            print(file)
-            dfs.append(pd.read_csv(file))
+            df = pd.read_csv(file)
+            print(file, f'shape={df.shape}')
+
+            if n_cols is None:
+                n_cols = df.shape[1]
+            else:
+                if n_cols != df.shape[1]:
+                    choice = input(f'the first df has {n_cols} columns, while this one has {df.shape[1]} what to do?'
+                                   f'1. skip.'
+                                   f'2. stop.')
+                    if choice == '1':
+                        continue
+                    else:
+                        print('exiting without creation of output file..')
+                        exit(1)
+
+            dfs.append(df)
 
     big_frame = pd.concat(dfs)
 
