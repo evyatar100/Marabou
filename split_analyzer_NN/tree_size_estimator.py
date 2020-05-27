@@ -44,14 +44,14 @@ class MyModel(Model):
 
 class TreeSizeEstimator:
 
-    def __init__(self):
+    def __init__(self, n_layers, layer_size):
         self.optimizer = tf.keras.optimizers.Adam()
         self.loss_object = tf.keras.losses.MeanSquaredError()
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
         self.test_loss = tf.keras.metrics.Mean(name='test_loss')
 
-        self.n_layers = 10
-        self.layel_size = 100
+        self.n_layers = n_layers
+        self.layel_size = layer_size
         self.activation = 'relu'
 
         self.model = MyModel(self.n_layers, self.layel_size, self.activation)
@@ -136,12 +136,12 @@ class TreeSizeEstimator:
 
         return train_dataset, train_dataset_test, samples_test, labels_test
 
-    def train_model(self, csv_path):
+    def train_model(self, csv_path, n_epochs):
         train_dataset, train_dataset_test, samples_test, labels_test = TreeSizeEstimator.get_data_formated(csv_path)
 
         self.checkpoint.restore(tf.train.latest_checkpoint(self.checkpoint_dir))
 
-        self.train(train_dataset, train_dataset_test, epochs=10)
+        self.train(train_dataset, train_dataset_test, epochs=n_epochs)
 
         results_df = pd.DataFrame({'real': labels_test})
         results_lst = self.model(samples_test)

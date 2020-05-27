@@ -6,8 +6,13 @@ import numpy as np
 
 if __name__ == '__main__':
     csv_path = sys.argv[1]
-    tree_estimator = TreeSizeEstimator()
-    tree_estimator.train_model(csv_path)
+
+    layers = int(sys.argv[2])
+    layer_size = int(sys.argv[3])
+    epochs = int(sys.argv[4])
+
+    tree_estimator = TreeSizeEstimator(layers, layer_size)
+    tree_estimator.train_model(csv_path, epochs)
 
     tree_estimator.restore_model()
     #

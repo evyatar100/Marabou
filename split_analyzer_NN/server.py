@@ -60,7 +60,7 @@ def init_server(port):
     serversocket.listen(2)
 
     print("loading Model...")
-    estimator = TreeSizeEstimator()
+    estimator = TreeSizeEstimator(10, 100)
     estimator.restore_model()
     print("Model Loaded.")
 

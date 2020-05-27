@@ -42,8 +42,10 @@ if __name__ == '__main__':
 
             dfs.append(df)
 
+    print('concatinating')
     big_frame = pd.concat(dfs)
 
+    print(f'saving to {name}')
     big_frame.to_csv(name, index=False)
 
     print("done..")
