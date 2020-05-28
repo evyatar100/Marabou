@@ -44,7 +44,9 @@ class MyModel(Model):
 
 class TreeSizeEstimator:
 
-    def __init__(self, n_layers, layer_size):
+    def __init__(self, n_layers, layer_size, name):
+
+        self.name = name
         self.optimizer = tf.keras.optimizers.Adam()
         self.loss_object = tf.keras.losses.MeanSquaredError()
         self.train_loss = tf.keras.metrics.Mean(name='train_loss')
@@ -56,18 +58,14 @@ class TreeSizeEstimator:
 
         self.model = MyModel(self.n_layers, self.layel_size, self.activation)
 
-        self.checkpoint_dir = './training_checkpoints'
+        self.checkpoint_dir = os.path.join('.', self.name, 'training_checkpoints')
         self.checkpoint_prefix = os.path.join(self.checkpoint_dir, "ckpt")
         self.checkpoint = tf.train.Checkpoint(optimizer=self.optimizer, model=self.model)
 
-    # def create_model(self):
-    #     model = tf.keras.Sequential()
-    #     for i in range(self.n_layers):
-    #         model.add(Dense(self.layel_size))
-    #         model.add(Activation(self.activation))
-    #     model.add(Dense(1))
-    #
-    #     return model
+        zero_network_state = np.zeros((1, N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS))
+        self.get_best_constraint(zero_network_state)
+
+        self.checkpoint.save(file_prefix=self.checkpoint_prefix)
 
     @tf.function
     def train_step(self, samples, labels):
