@@ -48,7 +48,7 @@ def handleClient(connection, estimator, thread_name):
     connection.close()
 
 
-def init_server(port):
+def init_server(name_dir, port):
 
     # create an INET, TCP socket
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -60,7 +60,7 @@ def init_server(port):
     serversocket.listen(2)
 
     print("loading Model...")
-    estimator = TreeSizeEstimator(10, 100)
+    estimator = TreeSizeEstimator(10, 100, name_dir)
     estimator.restore_model()
     print("Model Loaded.")
 
@@ -82,9 +82,11 @@ def init_server(port):
     serversocket.close()
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        print('usage: port_num')
+    if len(sys.argv) != 3:
+        print('usage: name_dir port_num')
         exit(1)
-    port = int(sys.argv[1])
+    name_dir = sys.argv[1]
+    port = int(sys.argv[2])
+    print(f'name = {name_dir}')
     print(f'port = {port}')
-    init_server(port)
+    init_server(name_dir, port)
