@@ -23,7 +23,7 @@ def folder2log(folder):
 def log(folder, txt):
     time_str = strftime("%Y-%m-%d_%H:%M:%S", gmtime())
     with open(folder2log(folder), 'a') as file:
-        file.write(f'{time_str} {txt}')
+        file.write(f'{time_str} {txt}\n')
     print(f'{time_str} logged into {folder}: {txt}')
 
 
