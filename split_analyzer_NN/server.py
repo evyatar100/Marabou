@@ -2,7 +2,7 @@ import os
 import socket
 import sys
 import threading
-
+import argparse
 
 import numpy as np
 
@@ -22,7 +22,7 @@ def encode_results(estimator_result):
     return estimator_result_str
 
 
-def handleClient(connection, estimator, thread_name):
+def handleClient(connection, estimator, thread_name, is_debug):
 
     prefix = thread_name + ':'
 
@@ -32,23 +32,30 @@ def handleClient(connection, estimator, thread_name):
         if not data:
             break
 
-        print(prefix, 'from connected user: ', data.decode())  # convert from byte to string
+        if is_debug:
+            print(prefix, 'from connected user: ', data.decode())  # convert from byte to string
+        else:
+            print(prefix, 'input for client')
 
         network_state = parse_network_state(data.decode())
         if estimator.check_input(network_state):
-            print(prefix, 'input is proper, waiting for estimation...')
+            if is_debug:
+                print(prefix, 'input is proper, waiting for estimation...')
             results = estimator.get_best_constraint(network_state)
             results_str = encode_results(results)
-            print(prefix, 'got result from model.')
+            if is_debug:
+                print(prefix, 'got result from model.')
             connection.send(results_str)
-            print(prefix, 'result was sent to the client.')
+            if is_debug:
+                print(prefix, 'result was sent to the client.')
         else:
+            print('input is not valid, sent \"error\" to client')
             connection.send(b'error')
 
     connection.close()
 
 
-def init_server(name_dir, port):
+def init_server(name_dir, port, is_debug):
 
     # create an INET, TCP socket
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -70,23 +77,35 @@ def init_server(name_dir, port):
     while True:
         # accept connections from outside
         (connsocket, address) = serversocket.accept()
-        print("Connection from: ", address)
-
         thread_name = f'thread {i}'
-        thread = threading.Thread(target=handleClient, args=(connsocket, estimator, thread_name))
+
+        print(f"Connection from: {address}. associated with {thread_name}.")
+
+        thread = threading.Thread(target=handleClient, args=(connsocket, estimator, thread_name, is_debug))
         thread.start()
 
-        # handleClient(connsocket, estimator)
         i += 1
 
     serversocket.close()
 
+
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print('usage: name_dir port_num')
-        exit(1)
-    name_dir = sys.argv[1]
-    port = int(sys.argv[2])
+    parser = argparse.ArgumentParser(description='Start the server')
+    parser.add_argument('name_dir', type=str, help='name of dir with network info')
+    parser.add_argument('port', type=int, help='port for server')
+    parser.add_argument('--debug', action='store_true', help='Whether or not to print debug info')
+    args = parser.parse_args()
+
+    #
+    # if len(sys.argv) != 3:
+    #     print('usage: name_dir port_num')
+    #     exit(1)
+    # name_dir = sys.argv[1]
+    # port = int(sys.argv[2])
+    name_dir = args.name_dir
+    port = args.port
+    is_debug = args.debug
+
     print(f'name = {name_dir}')
     print(f'port = {port}')
-    init_server(name_dir, port)
+    init_server(name_dir, port, is_debug)

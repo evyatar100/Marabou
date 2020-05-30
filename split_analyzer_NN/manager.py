@@ -3,6 +3,7 @@ import sys
 from tree_size_estimator import TreeSizeEstimator
 import json
 import pandas as pd
+from time import gmtime, strftime
 import numpy as np
 
 INIT = 'init'
@@ -20,9 +21,10 @@ def folder2log(folder):
 
 
 def log(folder, txt):
+    time_str = strftime("%Y-%m-%d_%H:%M:%S", gmtime())
     with open(folder2log(folder), 'a') as file:
-        file.write(txt)
-    print(f'logged into {folder}:', txt)
+        file.write(f'{time_str} {txt}')
+    print(f'{time_str} logged into {folder}: {txt}')
 
 
 def init_network(args):
