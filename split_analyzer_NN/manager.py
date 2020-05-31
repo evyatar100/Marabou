@@ -31,7 +31,7 @@ def init_network(args):
     assert len(args) == 3
     folder = args[0]
     layers = int(args[1])
-    layer_size = int(args[1])
+    layer_size = int(args[2])
 
     os.mkdir(folder)
     f = open(folder2log(folder), 'w')
