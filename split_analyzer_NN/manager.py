@@ -102,7 +102,7 @@ if __name__ == '__main__':
     elif option == TRAIN:
         train(sys.argv[2:])
 
-    elif option == TRAIN:
+    elif option == SBATCH:
         name_dir = sys.argv[2]
         epochs = int(sys.argv[3])
         create_sbatch(name_dir, epochs)
