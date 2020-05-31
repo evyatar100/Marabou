@@ -80,16 +80,16 @@ def train(args):
 def create_sbatch(name_dir, epochs, data_path='random1_data.csv'):
     sbatch_file_path = f'{name_dir}.sbatch'
     with open(sbatch_file_path, 'w') as file:
-        file.write(f'#!/bin/bash')
-        file.write(f'#SBATCH --job-name={name_dir}')
-        file.write(f'#SBATCH --cpus-per-task=8')
-        file.write(f'#SBATCH --output={name_dir}.out')
-        file.write(f'#SBATCH --partition=long')
-        file.write(f'#SBATCH --time=24:00:00')
-        file.write(f'#SBATCH --signal=B:SIGUSR1@300')
-        file.write(f'#SBATCH --mem-per-cpu=8G')
+        file.write(f'#!/bin/bash\n')
+        file.write(f'#SBATCH --job-name={name_dir}\n')
+        file.write(f'#SBATCH --cpus-per-task=8\n')
+        file.write(f'#SBATCH --output={name_dir}.out\n')
+        file.write(f'#SBATCH --partition=long\n')
+        file.write(f'#SBATCH --time=24:00:00\n')
+        file.write(f'#SBATCH --signal=B:SIGUSR1@300\n')
+        file.write(f'#SBATCH --mem-per-cpu=8G\n')
         file.write('\n')
-        file.write(f'python manager.py train {name_dir} {data_path} {epochs}')
+        file.write(f'python manager.py train {name_dir} {data_path} {epochs}\n')
 
 
 if __name__ == '__main__':
@@ -112,6 +112,8 @@ if __name__ == '__main__':
         print('init name_dir layers layer_size')
         print('or')
         print('train name_dir csv_path epochs')
+        print('or')
+        print('sbatch name_dir epochs')
 
 
 
