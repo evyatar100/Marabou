@@ -9,7 +9,8 @@ import numpy as np
 INIT = 'init'
 TRAIN = 'train'
 HELP = 'help'
-OPTIONS = ['init', 'train', 'help']
+SBATCH = 'sbatch'
+OPTIONS = [INIT, TRAIN, HELP, SBATCH]
 
 
 def folder2json(folder):
@@ -48,6 +49,8 @@ def init_network(args):
     tree_estimator = TreeSizeEstimator(layers, layer_size, folder)
     log(folder, 'finish initialisation.\n')
 
+    create_sbatch(folder, 50)
+
 
 def train(args):
     assert len(args) == 3
@@ -74,6 +77,21 @@ def train(args):
     log(folder, 'finish test.\n')
 
 
+def create_sbatch(name_dir, epochs, data_path='random1_data.csv'):
+    sbatch_file_path = f'{name_dir}.sbatch'
+    with open(sbatch_file_path, 'w') as file:
+        file.write(f'#!/bin/bash')
+        file.write(f'#SBATCH --job-name={name_dir}')
+        file.write(f'#SBATCH --cpus-per-task=8')
+        file.write(f'#SBATCH --output={name_dir}.out')
+        file.write(f'#SBATCH --partition=long')
+        file.write(f'#SBATCH --time=24:00:00')
+        file.write(f'#SBATCH --signal=B:SIGUSR1@300')
+        file.write(f'#SBATCH --mem-per-cpu=8G')
+        file.write('\n')
+        file.write(f'python manager.py train {name_dir} {data_path} {epochs}')
+
+
 if __name__ == '__main__':
     assert len(sys.argv) > 1
     option = sys.argv[1]
@@ -83,6 +101,11 @@ if __name__ == '__main__':
 
     elif option == TRAIN:
         train(sys.argv[2:])
+
+    elif option == TRAIN:
+        name_dir = sys.argv[2]
+        epochs = int(sys.argv[3])
+        create_sbatch(name_dir, epochs)
 
     else:
         print('usage:')
