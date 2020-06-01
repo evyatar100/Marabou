@@ -55,16 +55,20 @@ def handleClient(connection, estimator, thread_name, is_debug):
     connection.close()
 
 
-def init_server(name_dir, port, is_debug):
+def init_server(name_dir, port, is_debug, n_connections=500):
+    print('starting to initiate server.')
 
     # create an INET, TCP socket
     serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    print('created Socket.')
 
     # bind the socket to a public host, and a well-known port
     serversocket.bind((HOST, port))
+    print(f'binded Socket to port {port} on ip {HOST}')
 
     # become a server socket
-    serversocket.listen(2)
+    serversocket.listen(n_connections)
+    print(f'Socket now listens to {n_connections} connections')
 
     print("loading Model...")
     estimator = TreeSizeEstimator(10, 100, name_dir)
@@ -93,19 +97,15 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Start the server')
     parser.add_argument('name_dir', type=str, help='name of dir with network info')
     parser.add_argument('port', type=int, help='port for server')
+    parser.add_argument('-c', type=int, help='number of open connections to server')
     parser.add_argument('--debug', action='store_true', help='Whether or not to print debug info')
     args = parser.parse_args()
 
-    #
-    # if len(sys.argv) != 3:
-    #     print('usage: name_dir port_num')
-    #     exit(1)
-    # name_dir = sys.argv[1]
-    # port = int(sys.argv[2])
     name_dir = args.name_dir
     port = args.port
     is_debug = args.debug
+    n_connections = args.n
 
     print(f'name = {name_dir}')
     print(f'port = {port}')
-    init_server(name_dir, port, is_debug)
+    init_server(name_dir, port, is_debug, n_connections=n_connections)
