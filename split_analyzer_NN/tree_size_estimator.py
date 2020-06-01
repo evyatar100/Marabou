@@ -87,9 +87,14 @@ class TreeSizeEstimator:
         t_loss = self.loss_object(labels, predictions)
         self.test_loss(t_loss)
 
+
     def train(self, train_ds, test_ds, epochs):
         iterations_c = 0
         for epoch in range(epochs):
+            # Reset the metrics for the next epoch
+            self.train_loss.reset_states()
+            self.test_loss.reset_states()
+
             for test_images, test_labels in test_ds: #change name
                 self.test_step(test_images, test_labels)
 
@@ -100,10 +105,6 @@ class TreeSizeEstimator:
             print(
                 f'Epoch {epoch + 1}, iteration {iterations_c}, Train Loss: {self.train_loss.result()}, '
                 f'Test Loss: {self.test_loss.result()}')
-
-            # Reset the metrics for the next epoch
-            self.train_loss.reset_states()
-            self.test_loss.reset_states()
 
         self.checkpoint.save(file_prefix=self.checkpoint_prefix)
 
@@ -155,6 +156,12 @@ class TreeSizeEstimator:
 
     def check_input(self, network_state):
         return network_state.shape == (1, N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS)
+
+    def get_train_loss(self):
+        return self.train_loss.result()
+
+    def get_test_loss(self):
+        return self.test_loss.result()
 
     def get_best_constraint(self, network_state):
         assert self.check_input(network_state)

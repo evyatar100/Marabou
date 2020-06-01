@@ -13,8 +13,12 @@ SBATCH = 'sbatch'
 OPTIONS = [INIT, TRAIN, HELP, SBATCH]
 
 
-def folder2json(folder):
+def folder2network_params(folder):
     return os.path.join(folder, 'network_params.json')
+
+
+def folder2network_stats(folder):
+    return os.path.join(folder, 'network_stats.json')
 
 
 def folder2log(folder):
@@ -44,8 +48,9 @@ def init_network(args):
             'layers': layers,
             'layer_size': layer_size}
 
-    with open(folder2json(folder), 'w') as jfile:
+    with open(folder2network_params(folder), 'w') as jfile:
         json.dump(args, jfile)
+
     tree_estimator = TreeSizeEstimator(layers, layer_size, folder)
     log(folder, 'finish initialisation.\n')
 
@@ -60,11 +65,11 @@ def train(args):
     epochs = int(args[2])
     log(folder, f'stating train with inputs {args}')
 
-    with open(folder2json(folder)) as jfile:
+    with open(folder2network_params(folder)) as jfile:
         args = json.load(jfile)
+
     tree_estimator = TreeSizeEstimator(args['layers'], args['layer_size'], folder)
     tree_estimator.train_model(csv_path, epochs)
-    log(folder, 'finish training.\n')
 
     # test
     data = pd.read_csv(csv_path)
@@ -74,7 +79,12 @@ def train(args):
     result = tree_estimator.get_best_constraint(network_state)
     print(result)
 
-    log(folder, 'finish test.\n')
+    log(folder,
+        f'finish train. train_loss = {tree_estimator.get_train_loss()}, test_loss = {tree_estimator.get_test_loss()}.\n')
+
+    args = {'train_loss': float(tree_estimator.get_train_loss()), 'test_loss': float(tree_estimator.get_test_loss())}
+    with open(folder2network_stats(folder), 'w') as jfile:
+        json.dump(args, jfile)
 
 
 def create_sbatch(name_dir, epochs, data_path='random1_data.csv'):
@@ -114,7 +124,3 @@ if __name__ == '__main__':
         print('train name_dir csv_path epochs')
         print('or')
         print('sbatch name_dir epochs')
-
-
-
-
