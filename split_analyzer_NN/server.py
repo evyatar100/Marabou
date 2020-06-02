@@ -10,6 +10,8 @@ from tree_size_estimator import TreeSizeEstimator
 
 BUF_SIZE = 32768
 
+DEFAULT_N_CONNECTIONS = 500
+
 HOST = ''  # specifies that the socket is reachable by any address the machine happens to have
 
 def parse_network_state(network_state_str):
@@ -55,7 +57,7 @@ def handleClient(connection, estimator, thread_name, is_debug):
     connection.close()
 
 
-def init_server(name_dir, port, is_debug, n_connections=500):
+def init_server(name_dir, port, is_debug, n_connections):
     print('starting to initiate server.')
 
     # create an INET, TCP socket
@@ -104,7 +106,7 @@ if __name__ == '__main__':
     name_dir = args.name_dir
     port = args.port
     is_debug = args.debug
-    n_connections = args.n
+    n_connections = args.c if args.c is not None else DEFAULT_N_CONNECTIONS
 
     print(f'name = {name_dir}')
     print(f'port = {port}')
