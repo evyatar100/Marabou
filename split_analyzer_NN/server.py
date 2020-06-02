@@ -99,14 +99,14 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Start the server')
     parser.add_argument('name_dir', type=str, help='name of dir with network info')
     parser.add_argument('port', type=int, help='port for server')
-    parser.add_argument('-c', type=int, help='number of open connections to server')
+    parser.add_argument('-c', type=int, help='number of open connections to server', default=DEFAULT_N_CONNECTIONS)
     parser.add_argument('--debug', action='store_true', help='Whether or not to print debug info')
     args = parser.parse_args()
 
     name_dir = args.name_dir
     port = args.port
     is_debug = args.debug
-    n_connections = args.c if args.c is not None else DEFAULT_N_CONNECTIONS
+    n_connections = args.c
 
     print(f'name = {name_dir}')
     print(f'port = {port}')
