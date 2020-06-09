@@ -8,6 +8,8 @@ import numpy as np
 
 from tree_size_estimator import TreeSizeEstimator
 
+from manager import log
+
 BUF_SIZE = 32768
 
 DEFAULT_N_CONNECTIONS = 500
@@ -77,6 +79,9 @@ def init_server(name_dir, port, is_debug, n_connections):
     estimator.restore_model()
     print("Model Loaded.")
 
+    server_ip = socket.gethostbyname(socket.gethostname())
+    log_server_params(name_dir, server_ip, port)
+
     print("Server Listening...")
 
     i = 1
@@ -93,6 +98,21 @@ def init_server(name_dir, port, is_debug, n_connections):
         i += 1
 
     serversocket.close()
+
+
+def log_server_params(name_dir, ip, port):
+    file_path1 = os.path.join(name_dir, 'server_params.txt')
+    file_path2 = os.path.join('server_params.txt')
+
+    for file_path in [file_path1, file_path2]:
+        with open(file_path, 'w') as log_server_file:
+                log_server_file.write(ip)
+                log_server_file.write('\n')
+                log_server_file.write(str(port))
+                log_server_file.write('\n')
+
+                log(name_dir, f'Logged server params to {file_path} with ip={ip} and port={port}. by the way, the host'
+                              f' name is {socket.gethostname()}.')
 
 
 if __name__ == '__main__':

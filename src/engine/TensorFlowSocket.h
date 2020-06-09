@@ -14,7 +14,7 @@
 #include <string>
 
 #define BUF_SIZE 32768 // we usually need around 13000 chars
-#define DEFAULT_PORT 43001
+#define SERVER_PARAMS_PATH "/cs/labs/guykatz/evyatar100/Marabou/split_analyzer_NN/server_params.txt"
 
 using namespace std;
 
@@ -46,10 +46,10 @@ public:
 private:
 
     int sock;
-    char buf[BUF_SIZE];
-    int port = DEFAULT_PORT;
-
-    bool isInitSucsses;
+	bool isInitSucsses;
+	char buf[BUF_SIZE];
+	int server_port;
+	string server_ip;
 };
 
 #endif //SOCKETTRANING_TENSORFLOWSOCKET_H
