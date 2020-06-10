@@ -17,6 +17,7 @@ DEFAULT_N_CONNECTIONS = 500
 HOST = ''  # specifies that the socket is reachable by any address the machine happens to have
 
 def parse_network_state(network_state_str):
+    # network_state_str = network_state_str[:-1]  # remove last comma
     network_state = np.array(network_state_str.split(',')).reshape(1, -1).astype(np.float32)
     return network_state
 
@@ -28,10 +29,11 @@ def encode_results(estimator_result):
 
 def handleClient(connection, estimator, thread_name, is_debug):
 
-    prefix = thread_name + ':'
-
+    i = 0
     # Read data
     while True:
+        i += 1
+        prefix = f'{thread_name} call number {i}: '
         data = connection.recv(BUF_SIZE)
         if not data:
             break
@@ -51,7 +53,8 @@ def handleClient(connection, estimator, thread_name, is_debug):
                 print(prefix, 'got result from model.')
             connection.send(results_str)
             if is_debug:
-                print(prefix, 'result was sent to the client.')
+                print(prefix, 'result was sent to the client:', results_str)
+                print()
         else:
             print('input is not valid, sent \"error\" to client')
             connection.send(b'error')
@@ -102,7 +105,7 @@ def init_server(name_dir, port, is_debug, n_connections):
 
 def log_server_params(name_dir, ip, port):
     file_path1 = os.path.join(name_dir, 'server_params.txt')
-    file_path2 = os.path.join('server_params.txt')
+    file_path2 = '/cs/labs/guykatz/evyatar100/Marabou/split_analyzer_NN/server_params.txt'
 
     for file_path in [file_path1, file_path2]:
         with open(file_path, 'w') as log_server_file:
@@ -116,6 +119,8 @@ def log_server_params(name_dir, ip, port):
 
 
 if __name__ == '__main__':
+    print('Starting server...')
+
     parser = argparse.ArgumentParser(description='Start the server')
     parser.add_argument('name_dir', type=str, help='name of dir with network info')
     parser.add_argument('port', type=int, help='port for server')

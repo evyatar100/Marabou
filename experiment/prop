@@ -1,7 +1,7 @@
-nn_rand4
-nn.zip, vanilas.zip
---nndir=/cs/labs/guykatz/evyatar100/Marabou/experiment/nnet
-/cs/labs/guykatz/evyatar100/Marabou/experiment/property.txt
-34:00:00
+random2
+random.zip
+--nndir=/cs/labs/guykatz/evyatar100/Marabou/experiment/nnet_duplicated
+/cs/labs/guykatz/evyatar100/Marabou/experiment/properties/acas_property_3.txt
+18:00:00
 long
 8

@@ -86,7 +86,7 @@ PiecewiseLinearConstraint *SplitSelector::getConstraintFromNN( List<PiecewiseLin
     ASSERT( plViolatedConstraints != nullptr );
     string networkStateStr = getNetworkStateStr( plViolatedConstraints );
 
-    // get the result
+	// get the result
     std::cout << "getting the results from the server..." << '\n';
     std::stringstream estimatorResultSS( _tensorFlowSocket.runModel( networkStateStr ));
     std::cout << "got the results!" << '\n';
@@ -132,10 +132,9 @@ string SplitSelector::getNetworkStateStr( List<PiecewiseLinearConstraint *> *plV
 
     // create network_state string
     stringstream network_state;
-    network_state << _plConstraints[0]->isActive();
     for ( auto constraint: _plConstraints )
     {
-        network_state << ',' << constraint->isActive();
+        network_state << constraint->isActive();
 
         isViolated = plViolatedConstraintsSet.find( constraint ) != plViolatedConstraintsSet.end();
         network_state << ',' << isViolated;
@@ -151,11 +150,21 @@ string SplitSelector::getNetworkStateStr( List<PiecewiseLinearConstraint *> *plV
         f = reluConstraintPtr->getB();
         network_state << ',' << _tableau->getValue(f);
         network_state << ',' << _tableau->getLowerBound(f);
-        network_state << ',' << _tableau->getUpperBound(f);
+		network_state << ',' << _tableau->getUpperBound(f);
+
+		if (_plConstraints.back() != constraint)
+		{
+			network_state << ',';  // we don't want this comma in the end.
+		}
     }
 
-    // length ~~ 13001
-    return network_state.str();;
+    string network_state_str = network_state.str();
+
+	size_t n = std::count(network_state_str.begin(), network_state_str.end(), ',') + 1;
+	ASSERT(n == 2016)  // TODO N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS
+
+	// length ~~ 13001
+	return network_state_str;;
 }
 
 PiecewiseLinearConstraint *SplitSelector::getRandomConstraint( List<PiecewiseLinearConstraint *> *plViolatedConstraints )
