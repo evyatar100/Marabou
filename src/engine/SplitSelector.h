@@ -17,8 +17,7 @@
 #include <fstream>
 
 enum SelectorMode {RANDOM, NN, NONE};
-const SelectorMode DEFAULT_SELECTOR_MODE = NN
-		;
+const SelectorMode DEFAULT_SELECTOR_MODE = RANDOM;
 
 class SplitSelector
 {

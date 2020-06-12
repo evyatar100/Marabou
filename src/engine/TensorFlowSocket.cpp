@@ -8,9 +8,7 @@
 
 TensorFlowSocket::TensorFlowSocket()
 {
-
-	reInitiateSocket();
-
+	isInitSucsses = false;
 }
 
 void TensorFlowSocket::reInitiateSocket()
@@ -27,7 +25,7 @@ void TensorFlowSocket::reInitiateSocket()
 	infile.close();
 
 
-	std::cout << "Trying too connect to server, with ip " << server_ip << " and port " << server_port
+	std::cout << "Trying to connect to server, with ip " << server_ip << " and port " << server_port
 			  << "...\n";
 
 	sockaddr_in hint;

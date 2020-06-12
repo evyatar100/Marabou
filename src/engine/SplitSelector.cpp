@@ -46,11 +46,14 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints, A
         _constraint2OpenLogEntry(), _generator(), _fout(), _csvPath(), _tensorFlowSocket(), _selectorMode( DEFAULT_SELECTOR_MODE )
 {
     std::cout << "start SS constructor" << '\n';
-
-    if (!_tensorFlowSocket.isSocketReady())
-    {
-        std::cout << "warning: Socket is not ready. maybe the server is not running." << '\n';
-    }
+	if (DEFAULT_SELECTOR_MODE == NN)
+	{
+		_tensorFlowSocket.reInitiateSocket();
+		if (!_tensorFlowSocket.isSocketReady())
+		{
+			std::cout << "warning: Socket is not ready. maybe the server is not running." << '\n';
+		}
+	}
     struct timeval tv;
     gettimeofday( &tv, NULL );
     _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) + tv.tv_usec );

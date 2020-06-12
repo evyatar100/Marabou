@@ -88,7 +88,7 @@ def train(args):
 
 
 def create_sbatch(name_dir, epochs, data_path='random1_data.csv'):
-    sbatch_file_path = f'{name_dir}.sbatch'
+    sbatch_file_path = os.path.join(name_dir, f'{name_dir}.sbatch')
     with open(sbatch_file_path, 'w') as file:
         file.write(f'#!/bin/bash\n')
         file.write(f'#SBATCH --job-name={name_dir}\n')

@@ -87,7 +87,6 @@ class TreeSizeEstimator:
         t_loss = self.loss_object(labels, predictions)
         self.test_loss(t_loss)
 
-
     def train(self, train_ds, test_ds, epochs):
         iterations_c = 0
         for epoch in range(epochs):
@@ -95,7 +94,7 @@ class TreeSizeEstimator:
             self.train_loss.reset_states()
             self.test_loss.reset_states()
 
-            for test_images, test_labels in test_ds: #change name
+            for test_images, test_labels in test_ds:  #change name
                 self.test_step(test_images, test_labels)
 
             for samples, labels in train_ds:
