@@ -8,8 +8,14 @@ import tensorflow as tf
 from tensorflow.keras import Model
 from tensorflow.keras.layers import Dense, Activation, BatchNormalization
 
-N_CONSTRAINS = 224
+import sys
+DEBUG_WITH_BREAKPOINT = getattr(sys, 'gettrace', None) and getattr(sys, 'gettrace', None)()
 
+if DEBUG_WITH_BREAKPOINT:
+    tf.config.experimental_run_functions_eagerly(True)
+
+
+N_CONSTRAINS = 224
 N_FEATURES_PER_CONSTRAINS = 9
 
 
@@ -22,24 +28,18 @@ class MyModel(Model):
         self.relu = Activation(activation)
         self.dense = [Dense(layer_size) for _ in range(self.n_layers)]
 
-        self.dense_middle1 = Dense(1)
-        self.dense_middle2 = Dense(1)
+        # self.dense_middle1 = Dense(1)
+        # self.dense_middle2 = Dense(1)
         self.dense_final = Dense(1)
 
-        self.normalization = BatchNormalization()
+        # self.normalization = BatchNormalization()
 
     def call(self, x):
-        stops = {self.n_layers // 3: self.dense_middle1, 2 * self.n_layers // 3: self.dense_middle2}
-        outputs = []
         for i in range(self.n_layers):
             x = self.dense[i](x)
             x = self.relu(x)
-            if i in stops.keys():
-                outputs.append(stops[i](x))
-                x = self.normalization(x)
         x = self.dense_final(x)
-        outputs.append(x)
-        return outputs
+        return x
 
 
 class TreeSizeEstimator:
@@ -94,8 +94,8 @@ class TreeSizeEstimator:
             self.train_loss.reset_states()
             self.test_loss.reset_states()
 
-            for test_images, test_labels in test_ds:  #change name
-                self.test_step(test_images, test_labels)
+            for samples, labels in test_ds:
+                self.test_step(samples, labels)
 
             for samples, labels in train_ds:
                 iterations_c += 1
@@ -169,6 +169,6 @@ class TreeSizeEstimator:
         input_tensor[:, :N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS] = network_state
         input_tensor[:, N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS:] = np.eye(N_CONSTRAINS)
 
-        output = np.array(self.model(input_tensor))[-1, :, 0]
+        output = np.array(self.model(input_tensor))[:, 0]
         argsort = np.argsort(output)
         return argsort

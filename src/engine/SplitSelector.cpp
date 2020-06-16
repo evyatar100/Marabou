@@ -291,7 +291,7 @@ void SplitSelector::writeLogEntry( LogEntry *logEntry )
     int j = _constraint2index[logEntry->splittedConstraint];
     int size = logEntry->numVisitedTreeStatesAtUnsplit - logEntry->numVisitedTreeStatesAtSplit;
 
-    _fout << size;
+    _fout << size << ',';
     _fout << logEntry->networkState;
 
     for ( int i = 0; i < _numOfConstraints; ++i )
