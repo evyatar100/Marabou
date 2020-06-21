@@ -12,6 +12,7 @@ import sys
 DEBUG_WITH_BREAKPOINT = getattr(sys, 'gettrace', None) and getattr(sys, 'gettrace', None)()
 
 if DEBUG_WITH_BREAKPOINT:
+    print('Debug mode!')
     tf.config.experimental_run_functions_eagerly(True)
 
 
@@ -28,18 +29,24 @@ class MyModel(Model):
         self.relu = Activation(activation)
         self.dense = [Dense(layer_size) for _ in range(self.n_layers)]
 
-        # self.dense_middle1 = Dense(1)
-        # self.dense_middle2 = Dense(1)
+        self.dense_middle1 = Dense(1)
+        self.dense_middle2 = Dense(1)
         self.dense_final = Dense(1)
 
-        # self.normalization = BatchNormalization()
+        self.normalization = BatchNormalization()
 
     def call(self, x):
+        stops = {self.n_layers // 3: self.dense_middle1, 2 * self.n_layers // 3: self.dense_middle2}
+        outputs = []
         for i in range(self.n_layers):
             x = self.dense[i](x)
             x = self.relu(x)
+            if i in stops.keys():
+                outputs.append(stops[i](x))
+                x = self.normalization(x)
         x = self.dense_final(x)
-        return x
+        outputs.append(x)
+        return outputs
 
 
 class TreeSizeEstimator:
@@ -71,7 +78,7 @@ class TreeSizeEstimator:
     def train_step(self, samples, labels):
         with tf.GradientTape() as tape:
             predictions = self.model(samples)
-
+            
             loss = 0
             for predictions_i in predictions:
                 loss += self.loss_object(labels, predictions_i)
@@ -87,6 +94,7 @@ class TreeSizeEstimator:
         t_loss = self.loss_object(labels, predictions)
         self.test_loss(t_loss)
 
+
     def train(self, train_ds, test_ds, epochs):
         iterations_c = 0
         for epoch in range(epochs):
@@ -94,8 +102,8 @@ class TreeSizeEstimator:
             self.train_loss.reset_states()
             self.test_loss.reset_states()
 
-            for samples, labels in test_ds:
-                self.test_step(samples, labels)
+            for test_images, test_labels in test_ds: #change name
+                self.test_step(test_images, test_labels)
 
             for samples, labels in train_ds:
                 iterations_c += 1
@@ -169,6 +177,6 @@ class TreeSizeEstimator:
         input_tensor[:, :N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS] = network_state
         input_tensor[:, N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS:] = np.eye(N_CONSTRAINS)
 
-        output = np.array(self.model(input_tensor))[:, 0]
+        output = np.array(self.model(input_tensor))[-1, :, 0]
         argsort = np.argsort(output)
         return argsort
