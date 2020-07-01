@@ -56,7 +56,7 @@ def build_sbatch_file(sbatch_file_dir_path, job_name, identifier, solver,
     # set some variables
     sbatch_file_name = f'{identifier}.sbatch'
     summary_file_name = f'{identifier}.sum'
-    job_output_file_name = f'task_{job_name}_%j_{identifier}.out'
+    job_output_file_name = f'task_{job_name}_{identifier}_%j.out'
 
     sbatch_file_abs_path = os.path.join(sbatch_file_dir_path, sbatch_file_name)
     summary_file_rel_path = os.path.join(SOLVER_RESULT_PATH, summary_file_name)
