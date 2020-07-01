@@ -13,7 +13,7 @@
 #include <arpa/inet.h>
 #include <string>
 
-#define BUF_SIZE 32768 // we usually need around 13000 chars
+#define BUF_SIZE 1200 // we usually need around 1089 chars
 #define SERVER_PARAMS_PATH "/cs/labs/guykatz/evyatar100/Marabou/split_analyzer_NN/server_params.txt"
 
 using namespace std;
