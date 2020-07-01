@@ -73,11 +73,11 @@ string TensorFlowSocket::runModel(string input)
 	}
 
 	//		Wait for response
-	for (int i = 0; i < 4096; i++)
+	for (int i = 0; i < BUF_SIZE; i++)
 	{
 		buf[i] = 0;
 	}
-	int bytesReceived = recv(sock, buf, 4096, 0);
+	int bytesReceived = recv(sock, buf, BUF_SIZE, 0);
 	if (bytesReceived == -1)
 	{
 		cout << "There was an error getting response from server\n";
@@ -94,20 +94,3 @@ TensorFlowSocket::~TensorFlowSocket()
 	//	Close the socket
 	close(sock);
 }
-
-
-//void TensorFlowSocket::initPythonServer() {
-//    system("source ~/PycharmProjects/env/bin/activate");
-//
-//    system("source ~/PycharmProjects/env/bin/activate");
-//
-//    std::string command = "python3 ";
-//    std::string filename = "../../split_analyzer/server.py";
-//    std::string args = std::to_string(port);
-//
-//    command += filename;
-//    command += " ";
-//    command += args;
-//
-//    system(command.c_str());
-//}

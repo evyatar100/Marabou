@@ -10,7 +10,7 @@ from tree_size_estimator import TreeSizeEstimator
 
 from manager import log
 
-BUF_SIZE = 32768
+BUF_SIZE = 20000  # we actually need around 18000
 
 DEFAULT_N_CONNECTIONS = 500
 
@@ -48,6 +48,7 @@ def handleClient(connection, estimator, thread_name, is_debug):
             if is_debug:
                 print(prefix, 'input is proper, waiting for estimation...')
             results = estimator.get_best_constraint(network_state)
+            # len(results_str) == 1089
             results_str = encode_results(results)
             if is_debug:
                 print(prefix, 'got result from model.')

@@ -16,6 +16,10 @@
 #include <list>
 #include <fstream>
 
+#define N_CONSTRAINTS 300
+#define N_FEATURES_PER_CONSTRAINT 9
+
+
 enum SelectorMode {RANDOM, NN, NONE};
 const SelectorMode DEFAULT_SELECTOR_MODE = RANDOM;
 

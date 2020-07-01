@@ -45,35 +45,42 @@ SplitSelector::SplitSelector( List<PiecewiseLinearConstraint *> plConstraints, A
         _plConstraints( plConstraints.begin(), plConstraints.end()), _tableau( tableau ), _numOfConstraints( plConstraints.size()), _constraint2index(),
         _constraint2OpenLogEntry(), _generator(), _fout(), _csvPath(), _tensorFlowSocket(), _selectorMode( DEFAULT_SELECTOR_MODE )
 {
-    std::cout << "start SS constructor" << '\n';
-	if (DEFAULT_SELECTOR_MODE == NN)
-	{
-		_tensorFlowSocket.reInitiateSocket();
-		if (!_tensorFlowSocket.isSocketReady())
-		{
-			std::cout << "warning: Socket is not ready. maybe the server is not running." << '\n';
-		}
-	}
-    struct timeval tv;
-    gettimeofday( &tv, NULL );
-    _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) + tv.tv_usec );
-
-    int i = 0;
-    for ( auto constraint: _plConstraints )
+    if (plConstraints.size() == N_CONSTRAINTS)
     {
-        _constraint2index[constraint] = i;
-        _constraint2OpenLogEntry[constraint] = nullptr;
-        ++i;
+
+        std::cout << "start SS constructor" << '\n';
+        if ( DEFAULT_SELECTOR_MODE == NN )
+        {
+            _tensorFlowSocket.reInitiateSocket();
+            if ( !_tensorFlowSocket.isSocketReady())
+            {
+                std::cout << "warning: Socket is not ready. maybe the server is not running." << '\n';
+            }
+        }
+        struct timeval tv;
+        gettimeofday( &tv, NULL );
+        _generator = std::default_random_engine( static_cast<long unsigned int>(time( 0 )) + tv.tv_usec );
+
+        int i = 0;
+        for ( auto constraint: _plConstraints )
+        {
+            _constraint2index[constraint] = i;
+            _constraint2OpenLogEntry[constraint] = nullptr;
+            ++i;
+        }
+
+        _csvPath = generateCSVPath();
+
+        _fout.open( _csvPath, std::ios::out );
+        _fout.close();
+        _fout.open( _csvPath, std::ios::out | std::ios::app );
+        writeHeadLine();
+        _fout.close();
+        _fout.open( _csvPath, std::ios::out | std::ios::app );
+    } else{
+        std::cerr << "Input size is " << plConstraints.size() << "and not" << N_CONSTRAINTS
+        << "As required. You should probably set GlobalConfiguration::PREPROCESSOR_ELIMINATE_VARIABLES = false" << '\n';
     }
-
-    _csvPath = generateCSVPath();
-
-    _fout.open( _csvPath, std::ios::out );
-    _fout.close();
-    _fout.open( _csvPath, std::ios::out | std::ios::app );
-    writeHeadLine();
-    _fout.close();
-    _fout.open( _csvPath, std::ios::out | std::ios::app );
 }
 
 SplitSelector::~SplitSelector()
@@ -164,7 +171,7 @@ string SplitSelector::getNetworkStateStr( List<PiecewiseLinearConstraint *> *plV
     string network_state_str = network_state.str();
 
 	size_t n = std::count(network_state_str.begin(), network_state_str.end(), ',') + 1;
-	ASSERT(n == 2016)  // TODO N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS
+	ASSERT(n == N_CONSTRAINTS * N_FEATURES_PER_CONSTRAINT)
 
 	// length ~~ 13001
 	return network_state_str;;

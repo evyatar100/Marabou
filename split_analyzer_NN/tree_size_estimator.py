@@ -16,7 +16,7 @@ if DEBUG_WITH_BREAKPOINT:
     tf.config.experimental_run_functions_eagerly(True)
 
 
-N_CONSTRAINS = 224
+N_CONSTRAINS = 300
 N_FEATURES_PER_CONSTRAINS = 9
 
 
