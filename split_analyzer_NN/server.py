@@ -119,8 +119,6 @@ def log_server_params(name_dir, ip, port):
 
 
 if __name__ == '__main__':
-    print_path = f'{name_dir}/server.out'
-    sys.stdout = open(print_path, "w")
     print('Starting server...')
 
     parser = argparse.ArgumentParser(description='Start the server')
@@ -134,6 +132,9 @@ if __name__ == '__main__':
     port = args.port
     is_debug = args.debug
     n_connections = args.c
+
+    print_path = f'{name_dir}/server.out'
+    sys.stdout = open(print_path, "w")
 
     print(f'name = {name_dir}')
     print(f'port = {port}')
