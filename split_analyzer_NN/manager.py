@@ -88,18 +88,20 @@ def train(args):
 
 
 def create_sbatch(name_dir, epochs, data_path='random1_data.csv'):
-    sbatch_file_path = os.path.join(name_dir, f'{name_dir}.sbatch')
+    sbatch_file_path = os.path.join(name_dir, f'train.sbatch')
+    out_file_path = os.path.join(name_dir, 'output.out')
     with open(sbatch_file_path, 'w') as file:
         file.write(f'#!/bin/bash\n')
         file.write(f'#SBATCH --job-name={name_dir}\n')
         file.write(f'#SBATCH --cpus-per-task=8\n')
-        file.write(f'#SBATCH --output={name_dir}.out\n')
+        file.write(f'#SBATCH --output={out_file_path}\n')
         file.write(f'#SBATCH --partition=long\n')
         file.write(f'#SBATCH --time=24:00:00\n')
         file.write(f'#SBATCH --signal=B:SIGUSR1@300\n')
         file.write(f'#SBATCH --mem-per-cpu=8G\n')
         file.write('\n')
-        file.write(f'python manager.py train {name_dir} {data_path} {epochs}\n')
+        file.write(f'module load tensorflow/2.0.0\n')
+        file.write(f'python3 manager.py train {name_dir} {data_path} {epochs}\n')
 
 
 if __name__ == '__main__':
