@@ -21,7 +21,7 @@
 
 
 enum SelectorMode {RANDOM, NN, NONE};
-const SelectorMode DEFAULT_SELECTOR_MODE = RANDOM;
+const SelectorMode DEFAULT_SELECTOR_MODE = NN;
 
 class SplitSelector
 {
