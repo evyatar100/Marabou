@@ -1,6 +1,6 @@
 import os
 import sys
-from tree_size_estimator import TreeSizeEstimator
+from tree_size_estimator import TreeSizeEstimator, N_CONSTRAINS, N_FEATURES_PER_CONSTRAINS
 import json
 import pandas as pd
 from time import gmtime, strftime
@@ -74,8 +74,7 @@ def train(args):
     # test
     data = pd.read_csv(csv_path)
     samples = data.drop(columns=['sub-tree_size']).values
-    N_CONSTRAINS = 224
-    network_state = samples[0, :N_CONSTRAINS * 9].reshape(1, -1)
+    network_state = samples[0, :N_CONSTRAINS * N_FEATURES_PER_CONSTRAINS].reshape(1, -1)
     result = tree_estimator.get_best_constraint(network_state)
     print(result)
 
