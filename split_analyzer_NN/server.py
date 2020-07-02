@@ -9,12 +9,30 @@ import numpy as np
 from tree_size_estimator import TreeSizeEstimator
 
 from manager import log
+import builtins
+
 
 BUF_SIZE = 40000  # we actually need around 18000
 
 DEFAULT_N_CONNECTIONS = 500
 
 HOST = ''  # specifies that the socket is reachable by any address the machine happens to have
+
+print_path = None
+print_file = None
+print_count = 0
+
+def print(*args, **kwargs):
+    global print_count
+    print_count += 1
+    builtins.print(*args, **kwargs)
+    if print_file != None:
+        kwargs.update({'file': print_file})
+        if print_count % 50 == 0:
+            print_count = 0
+            kwargs.update({'flash': True})
+        builtins.print(*args, **kwargs)
+
 
 def parse_network_state(network_state_str):
     network_state = np.array(network_state_str.split(',')).reshape(1, -1).astype(np.float32)
@@ -101,11 +119,12 @@ def init_server(name_dir, port, is_debug, n_connections):
         i += 1
 
     serversocket.close()
+    print_file.close()
 
 
 def log_server_params(name_dir, ip, port):
     file_path1 = os.path.join(name_dir, 'server_params.txt')
-    file_path2 = '/cs/labs/guykatz/evyatar100/Marabou/split_analyzer_NN/server_params.txt'
+    file_path2 = 'server_params.txt'
 
     for file_path in [file_path1, file_path2]:
         with open(file_path, 'w') as log_server_file:
@@ -134,7 +153,7 @@ if __name__ == '__main__':
     n_connections = args.c
 
     print_path = f'{name_dir}/server.out'
-    sys.stdout = open(print_path, "w")
+    print_file = open(print_path, 'w')
 
     print(f'name = {name_dir}')
     print(f'port = {port}')
