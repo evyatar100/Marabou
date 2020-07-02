@@ -10,14 +10,13 @@ from tree_size_estimator import TreeSizeEstimator
 
 from manager import log
 
-BUF_SIZE = 20000  # we actually need around 18000
+BUF_SIZE = 40000  # we actually need around 18000
 
 DEFAULT_N_CONNECTIONS = 500
 
 HOST = ''  # specifies that the socket is reachable by any address the machine happens to have
 
 def parse_network_state(network_state_str):
-    # network_state_str = network_state_str[:-1]  # remove last comma
     network_state = np.array(network_state_str.split(',')).reshape(1, -1).astype(np.float32)
     return network_state
 
@@ -120,6 +119,8 @@ def log_server_params(name_dir, ip, port):
 
 
 if __name__ == '__main__':
+    print_path = f'{name_dir}/server.out'
+    sys.stdout = open(print_path, "w")
     print('Starting server...')
 
     parser = argparse.ArgumentParser(description='Start the server')
