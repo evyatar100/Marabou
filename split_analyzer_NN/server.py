@@ -28,14 +28,13 @@ def print(*args, **kwargs):
     builtins.print(*args, **kwargs)
     if print_file != None:
         kwargs.update({'file': print_file})
-        if print_count % 50 == 0:
-            print_count = 0
-            kwargs.update({'flash': True})
         builtins.print(*args, **kwargs)
 
 
 def parse_network_state(network_state_str):
-    network_state = np.array(network_state_str.split(',')).reshape(1, -1).astype(np.float32)
+    x = np.array(network_state_str.split(',')).reshape(1, -1)
+    print(len(network_state_str), x.shape)
+    network_state = x.astype(np.float32)
     return network_state
 
 

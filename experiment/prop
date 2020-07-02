@@ -1,6 +1,6 @@
-random3
-random.zip
---nndir=/cs/labs/guykatz/evyatar100/Marabou/experiment/nnet_duplicated
+nn_one
+nn.zip
+--nndir=/cs/labs/guykatz/evyatar100/Marabou/experiment/nnet_one
 /cs/labs/guykatz/evyatar100/Marabou/experiment/properties/acas_property_3.txt
 18:00:00
 long
