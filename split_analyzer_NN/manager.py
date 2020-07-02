@@ -117,7 +117,11 @@ if __name__ == '__main__':
     elif option == SBATCH:
         name_dir = sys.argv[2]
         epochs = int(sys.argv[3])
-        create_sbatch(name_dir, epochs)
+        if len(sys.argv) > 4:
+            data_file = sys.argv[4]
+        else:
+            data_file = None
+        create_sbatch(name_dir, epochs, data_file)
 
     else:
         print('usage:')

@@ -45,8 +45,8 @@ if __name__ == '__main__':
     print('concatinating')
     big_frame = pd.concat(dfs)
 
-    print(f'saving to {name}')
+    print(f'saving to {name}. shape={big_frame.shape}')
     big_frame.to_csv(name, index=False)
 
-    print("done..")
     print(f'new file was created: {name}')
+    print("done..")
