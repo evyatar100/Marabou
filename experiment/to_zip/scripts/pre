@@ -3,5 +3,10 @@
 # $3 = outpt net
 # $4 = output property
 
+module load tensorflow/2.0.0
+python3 /cs/usr/evyatar100/labs/Marabou/split_analyzer_NN/server.py /cs/usr/evyatar100/labs/Marabou/split_analyzer_NN/model7 43002 &
+
+sleep 1m
+
 cp -T $1 $3
 cp -T $2 $4

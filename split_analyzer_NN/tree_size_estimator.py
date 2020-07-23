@@ -1,3 +1,4 @@
+
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
@@ -46,7 +47,7 @@ class MyModel(Model):
                 x = self.normalization(x)
         x = self.dense_final(x)
         outputs.append(x)
-        return outputs
+        return outputs[0:]
 
 
 class TreeSizeEstimator:
@@ -156,7 +157,9 @@ class TreeSizeEstimator:
             title_diff = f'diff{i}'
             results_df[title_pred] = results.numpy()[:, 0]
             results_df[title_diff] = np.abs(results_df['real'] - results_df[title_pred])
+            fu = results_df[title_diff] / results_df['real']
             print(f'mu_{i} = {np.mean(results_df[title_diff])}')
+            print(f'fu_{i} = {np.mean(fu)}')
 
     def restore_model(self):
         self.checkpoint.restore(tf.train.latest_checkpoint(self.checkpoint_dir))
